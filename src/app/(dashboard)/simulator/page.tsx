@@ -1,18 +1,50 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { TopNav } from "@/components/layout/top-nav";
 import { Button } from "@/components/ui/button";
-import { Loader2, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2 } from "lucide-react";
+import { Loader2, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2, Swords, DollarSign, Coins, Bot, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
-const PREBUILT = [
-  { icon: "🍎", title: "Apple goes bankrupt tomorrow", q: "What if Apple Inc went bankrupt tomorrow?" },
-  { icon: "⚔️", title: "Iran vs Israel escalates 30 days", q: "What if the Iran vs Israel conflict escalated into full-scale war for 30 more days?" },
-  { icon: "💵", title: "US Dollar loses reserve status", q: "What if the US dollar lost its global reserve currency status overnight?" },
-  { icon: "₿", title: "Bitcoin hits $1 million", q: "What if Bitcoin reached $1 million per coin this week?" },
-  { icon: "🤖", title: "AI replaces 50% of jobs", q: "What if AI replaced 50% of white-collar jobs in the next 2 years?" },
-  { icon: "🌏", title: "China invades Taiwan tomorrow", q: "What if China launched a military invasion of Taiwan tomorrow?" },
+interface Scenario {
+  icon: ReactNode;
+  title: string;
+  q: string;
+}
+
+const PREBUILT: Scenario[] = [
+  {
+    icon: <Image src="/apple-icon.ico" alt="Apple" width={32} height={32} className="rounded-lg" />,
+    title: "Apple goes bankrupt tomorrow",
+    q: "What if Apple Inc went bankrupt tomorrow?",
+  },
+  {
+    icon: <Swords className="h-8 w-8 text-red-400" />,
+    title: "Iran vs Israel escalates 30 days",
+    q: "What if the Iran vs Israel conflict escalated into full-scale war for 30 more days?",
+  },
+  {
+    icon: <DollarSign className="h-8 w-8 text-amber-400" />,
+    title: "US Dollar loses reserve status",
+    q: "What if the US dollar lost its global reserve currency status overnight?",
+  },
+  {
+    icon: <Coins className="h-8 w-8 text-yellow-400" />,
+    title: "Bitcoin hits $1 million",
+    q: "What if Bitcoin reached $1 million per coin this week?",
+  },
+  {
+    icon: <Bot className="h-8 w-8 text-violet-400" />,
+    title: "AI replaces 50% of jobs",
+    q: "What if AI replaced 50% of white-collar jobs in the next 2 years?",
+  },
+  {
+    icon: <Globe2 className="h-8 w-8 text-blue-400" />,
+    title: "China invades Taiwan tomorrow",
+    q: "What if China launched a military invasion of Taiwan tomorrow?",
+  },
 ];
 
 const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
@@ -117,7 +149,7 @@ export default function WhatIfPage() {
                       : "border-[#E4E7E5] bg-white hover:border-[#1B5E39]/40"
                   )}
                 >
-                  <span className="text-2xl mb-2 block">{s.icon}</span>
+                  <div className="mb-2 h-8 w-8 flex items-center justify-center">{s.icon}</div>
                   <p className="text-[13px] font-semibold text-[#111917] leading-snug">{s.title}</p>
                 </button>
               ))}

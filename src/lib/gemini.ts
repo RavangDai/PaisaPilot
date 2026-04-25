@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import type { SafetySetting } from "@google/generative-ai";
 
 function getClient() {
   if (!process.env.GEMINI_API_KEY) {
@@ -7,7 +8,6 @@ function getClient() {
   return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 }
 
-// Newest models first — falls through on 404/deprecated errors
 const FLASH_MODELS = [
   "gemini-2.5-flash",
   "gemini-2.0-flash",
@@ -25,6 +25,14 @@ const PRO_MODELS = [
   "gemini-1.5-pro",
 ];
 
+// Permissive settings for roast mode — allows comedic/satirical content
+export const ROAST_SAFETY: SafetySetting[] = [
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT,        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,       threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+];
+
 function isModelError(err: unknown): boolean {
   const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
   return (
@@ -39,7 +47,8 @@ function isModelError(err: unknown): boolean {
 
 export async function generateText(
   prompt: string,
-  model: "pro" | "flash" = "flash"
+  model: "pro" | "flash" = "flash",
+  safetySettings?: SafetySetting[]
 ): Promise<string> {
   const client = getClient();
   const candidates = model === "pro" ? PRO_MODELS : FLASH_MODELS;
@@ -47,7 +56,7 @@ export async function generateText(
   let lastError: unknown;
   for (const modelName of candidates) {
     try {
-      const m = client.getGenerativeModel({ model: modelName });
+      const m = client.getGenerativeModel({ model: modelName, safetySettings });
       const result = await m.generateContent(prompt);
       return result.response.text();
     } catch (err) {

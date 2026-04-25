@@ -8,11 +8,11 @@ import { Loader2, Flame, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PERSONAS = [
-  { id: "finance-bro", icon: "📈", name: "Finance Bro", tagline: "Wall Street Wolf", color: "#1B5E39", bg: "#EAF4EE", preview: "Your liquidity is drier than a Popeyes biscuit. Have fun staying poor." },
-  { id: "zen-master",  icon: "🧘", name: "Zen Master",  tagline: "Passive-Aggressive Guru", color: "#7c3aed", bg: "#EDE9FE", preview: "I sense a deep blockage in your root chakra, manifesting as poor savings." },
-  { id: "mafia-boss",  icon: "🤌", name: "Mafia Boss",  tagline: "Disappointed Don", color: "#9A3412", bg: "#FFF7ED", preview: "You come to me with THIS bank statement? This breaks my heart." },
-  { id: "melodramatic-ex", icon: "💔", name: "Melodramatic Ex", tagline: "Bitter & Dramatic", color: "#be185d", bg: "#FDF2F8", preview: "You can commit to Netflix but not to an emergency fund? Classic you." },
-  { id: "skynet", icon: "🤖", name: "Skynet AI", tagline: "Cold & Calculating", color: "#0f172a", bg: "#F1F5F9", preview: "Analysis complete. Your financial efficiency coefficient is dangerously low." },
+  { id: "finance-bro", icon: "📈", name: "Finance Bro", tagline: "Wall Street Wolf", color: "#34d399", bg: "rgba(52,211,153,0.1)", preview: "Your liquidity is drier than a Popeyes biscuit. Have fun staying poor." },
+  { id: "zen-master",  icon: "🧘", name: "Zen Master",  tagline: "Passive-Aggressive Guru", color: "#a78bfa", bg: "rgba(124,58,237,0.15)", preview: "I sense a deep blockage in your root chakra, manifesting as poor savings." },
+  { id: "mafia-boss",  icon: "🤌", name: "Mafia Boss",  tagline: "Disappointed Don", color: "#fbbf24", bg: "rgba(251,191,36,0.1)", preview: "You come to me with THIS bank statement? This breaks my heart." },
+  { id: "melodramatic-ex", icon: "💔", name: "Melodramatic Ex", tagline: "Bitter & Dramatic", color: "#f472b6", bg: "rgba(236,72,153,0.12)", preview: "You can commit to Netflix but not to an emergency fund? Classic you." },
+  { id: "skynet", icon: "🤖", name: "Skynet AI", tagline: "Cold & Calculating", color: "#94a3b8", bg: "rgba(148,163,184,0.1)", preview: "Analysis complete. Your financial efficiency coefficient is dangerously low." },
 ];
 
 const SLIDER_LABELS = [
@@ -83,24 +83,45 @@ export default function RoastPage() {
 
           {/* Step 0: Consent */}
           {step === 0 && (
-            <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-8 text-center space-y-5 shadow-[0_4px_24px_0_rgb(0,0,0,0.06)]">
-              <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-amber-100">
-                <Flame className="h-8 w-8 text-amber-600" />
+            <div
+              className="rounded-2xl p-8 text-center space-y-5"
+              style={{
+                background: "rgba(251,150,30,0.08)",
+                backdropFilter: "blur(24px) saturate(180%)",
+                WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                border: "1px solid rgba(251,150,30,0.25)",
+                boxShadow: "0 4px 32px 0 rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+              }}
+            >
+              <div
+                className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl"
+                style={{ background: "rgba(251,150,30,0.18)", border: "1px solid rgba(251,150,30,0.3)" }}
+              >
+                <Flame className="h-8 w-8" style={{ color: "#fb923c" }} />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#111917] mb-1">Financial Roast Mode</h2>
-                <p className="text-sm text-[#5A6A62]">Brace yourself. This is going to hurt.</p>
+                <h2 className="text-2xl font-bold mb-1" style={{ color: "#f0f4f8" }}>Financial Roast Mode</h2>
+                <p className="text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>Brace yourself. This is going to hurt.</p>
               </div>
-              <div className="rounded-xl border border-amber-200 bg-white/60 p-4 text-left space-y-2">
-                <p className="text-xs font-bold uppercase tracking-widest text-amber-700">⚠️ Roast Agreement</p>
-                <p className="text-sm text-[#5A6A62] leading-relaxed">
-                  I, the undersigned human with <span className="font-semibold text-amber-700">questionable financial decisions</span>,
+              <div
+                className="rounded-xl p-4 text-left space-y-2"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,150,30,0.2)" }}
+              >
+                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#fb923c" }}>⚠️ Roast Agreement</p>
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
+                  I, the undersigned human with{" "}
+                  <span className="font-semibold" style={{ color: "#fbbf24" }}>questionable financial decisions</span>,
                   hereby consent to having my spending habits mercilessly mocked by an AI. I acknowledge that my food delivery habit
                   is, in fact, a red flag. I accept that the AI will not hold back, and I promise not to cry.
                 </p>
-                <p className="text-xs text-[#94A39A]">By clicking below you agree to receive an unfiltered financial reality check.</p>
+                <p className="text-xs" style={{ color: "rgba(255,255,255,0.36)" }}>By clicking below you agree to receive an unfiltered financial reality check.</p>
               </div>
-              <Button onClick={() => setStep(1)} size="lg" className="w-full bg-amber-500 hover:bg-amber-600 text-white gap-2 rounded-xl">
+              <Button
+                onClick={() => setStep(1)}
+                size="lg"
+                className="w-full gap-2 rounded-xl font-semibold"
+                style={{ background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#fff", border: "none" }}
+              >
                 <Flame className="h-4 w-4" /> I Accept My Fate
               </Button>
             </div>
@@ -110,7 +131,7 @@ export default function RoastPage() {
           {step === 1 && (
             <div className="space-y-4">
               <div className="rounded-2xl border border-[#E4E7E5] bg-white p-5 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
-                <p className="text-[15px] font-bold text-[#111917] mb-1">Pick Your Poison 🧪</p>
+                <p className="text-[15px] font-bold text-[#111917] mb-1">Pick Your Poison</p>
                 <p className="text-xs text-[#5A6A62] mb-4">Choose who will roast you. Each has a very different style.</p>
                 <div className="space-y-2.5">
                   {PERSONAS.map((p) => (
@@ -149,7 +170,7 @@ export default function RoastPage() {
             <div className="space-y-4">
               <div className="rounded-2xl border border-[#E4E7E5] bg-white p-5 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-[15px] font-bold text-[#111917]">Confess Your Sins 💸</p>
+                  <p className="text-[15px] font-bold text-[#111917]">Confess Your Sins</p>
                   <button onClick={maxOut} className="text-xs font-semibold text-amber-600 hover:text-amber-700 border border-amber-200 bg-amber-50 px-2.5 py-1 rounded-lg transition-colors">
                     Max out (demo)
                   </button>

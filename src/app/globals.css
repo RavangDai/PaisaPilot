@@ -165,6 +165,27 @@ select option {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.24); }
 
+/* ── Gradient background neutraliser ──────────────────────────── */
+/* Tailwind gradient utilities set background-image, which bypasses
+   background-color overrides. Neutralise light gradient stops so
+   any gradient that slips through renders dark instead of cream. */
+
+.from-amber-50  { --tw-gradient-from: rgba(251,150,30,0.12) !important; }
+.from-orange-50 { --tw-gradient-from: rgba(249,115,22,0.12) !important; }
+.from-yellow-50 { --tw-gradient-from: rgba(250,204,21,0.10) !important; }
+.from-red-50    { --tw-gradient-from: rgba(220,38,38,0.10) !important; }
+.from-blue-50   { --tw-gradient-from: rgba(59,130,246,0.10) !important; }
+.from-green-50  { --tw-gradient-from: rgba(52,211,153,0.10) !important; }
+.from-purple-50 { --tw-gradient-from: rgba(124,58,237,0.10) !important; }
+.to-orange-50   { --tw-gradient-to: rgba(249,115,22,0.08) !important; }
+.to-amber-50    { --tw-gradient-to: rgba(251,150,30,0.08) !important; }
+.to-red-50      { --tw-gradient-to: rgba(220,38,38,0.08) !important; }
+.to-blue-50     { --tw-gradient-to: rgba(59,130,246,0.08) !important; }
+.to-purple-50   { --tw-gradient-to: rgba(124,58,237,0.08) !important; }
+
+/* Also ensure bg-white/60, bg-white/80 etc stay glass-dark */
+[class*="bg-white\/"] { background-color: rgba(255,255,255,0.07) !important; }
+
 /* ── Glass utility class ───────────────────────────────────────── */
 
 .glass {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { generateText } from "@/lib/gemini";
+import { generateText, ROAST_SAFETY } from "@/lib/gemini";
 import { connectToDatabase } from "@/lib/mongodb";
 import RoastHistoryModel from "@/models/RoastHistory";
 
@@ -84,7 +84,7 @@ Roast this person's finances HARD in your persona's voice. Return ONLY valid JSO
   "catchphrase": "string (a brutal memorable one-liner punchline in your persona's voice)"
 }`;
 
-    const raw = await generateText(prompt, "pro");
+    const raw = await generateText(prompt, "flash", ROAST_SAFETY);
 
     let parsed: { score?: number; roast?: string; habits?: string[]; improvements?: string[]; summary?: string; catchphrase?: string } = {};
     try {
