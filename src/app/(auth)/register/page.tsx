@@ -42,7 +42,7 @@ export default function RegisterPage() {
 
       <div className="relative w-full max-w-sm">
         <div className="flex flex-col items-center mb-8">
-          <Image src="/logo.png" alt="DollarPaisa" width={56} height={56} className="object-contain mb-3" />
+          <Image src="/logo.png" alt="DollarPilot" width={56} height={56} className="object-contain mb-3" />
           <h1 className="text-2xl font-bold text-[#111917]">Create account</h1>
           <p className="text-sm text-[#5A6A62] mt-1">Start your financial journey today</p>
         </div>

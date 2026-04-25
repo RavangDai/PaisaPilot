@@ -36,15 +36,15 @@ export function RoastResult({ data, persona, intensity, total }: RoastResultProp
   const ScoreIcon = score >= 70 ? CheckCircle : score >= 55 ? AlertCircle : score >= 35 ? AlertTriangle : XCircle;
   const scoreLabel = score >= 70 ? "Not Bad" : score >= 55 ? "Needs Work" : score >= 35 ? "Yikes" : "Financial Disaster";
 
-  const shareText = `My financial health score: ${score}/100 💀\n"${data.catchphrase ?? data.roast ?? ""}"\n\nRoasted by ${data.personaLabel} on DollarPaisa`;
+  const shareText = `My financial health score: ${score}/100 💀\n"${data.catchphrase ?? data.roast ?? ""}"\n\nRoasted by ${data.personaLabel} on DollarPilot`;
 
   function copyRoast() {
     navigator.clipboard.writeText(shareText).catch(() => {});
   }
 
   function shareTwitter() {
-    const tweet = `My financial health score: ${score}/100 🔥 "${data.catchphrase ?? data.summary}" — Roasted by ${data.personaLabel} on @DollarPaisa`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}&hashtags=DollarPaisa,FinancialRoast`, "_blank");
+    const tweet = `My financial health score: ${score}/100 🔥 "${data.catchphrase ?? data.summary}" — Roasted by ${data.personaLabel} on @DollarPilot`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}&hashtags=DollarPilot,FinancialRoast`, "_blank");
   }
 
   function shareWhatsApp() {
@@ -53,7 +53,7 @@ export function RoastResult({ data, persona, intensity, total }: RoastResultProp
 
   async function shareNative() {
     if (navigator.share) {
-      await navigator.share({ title: "My Financial Roast — DollarPaisa", text: shareText }).catch(() => {});
+      await navigator.share({ title: "My Financial Roast — DollarPilot", text: shareText }).catch(() => {});
     } else {
       copyRoast();
     }

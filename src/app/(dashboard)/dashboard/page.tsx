@@ -163,22 +163,13 @@ export default async function DashboardPage() {
           {statCards.map(({ label, value, sub, icon: Icon, accent, href }) => (
             <Link key={href} href={href}>
               <div
-                className="relative rounded-2xl p-5 cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
+                className="dp-hover-surface relative rounded-2xl p-5 cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
                 style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: `1px solid ${accent}22`,
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  boxShadow: `0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)`,
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = `${accent}44`;
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.09)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = `${accent}22`;
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
-                }}
+                  "--dp-bg": "rgba(14,36,25,0.70)",
+                  "--dp-bg-hover": "rgba(24,61,42,0.72)",
+                  "--dp-border": `${accent}22`,
+                  "--dp-border-hover": `${accent}44`,
+                } as React.CSSProperties}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div
@@ -214,23 +205,15 @@ export default async function DashboardPage() {
             {features.map(({ href, icon: Icon, title, description, tag, color, bg }) => (
               <Link key={href} href={href}>
                 <div
-                  className="group rounded-2xl p-5 cursor-pointer h-full transition-all duration-200"
+                  className="dp-hover-surface group rounded-2xl p-5 cursor-pointer h-full transition-all duration-200 hover:-translate-y-px"
                   style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    backdropFilter: "blur(20px)",
-                    WebkitBackdropFilter: "blur(20px)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.09)";
-                    (e.currentTarget as HTMLElement).style.borderColor = `${color}30`;
-                    (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px ${color}20`;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
-                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
-                    (e.currentTarget as HTMLElement).style.boxShadow = "none";
-                  }}
+                    "--dp-bg": "rgba(14,36,25,0.62)",
+                    "--dp-bg-hover": "rgba(24,61,42,0.70)",
+                    "--dp-border": "rgba(249,250,251,0.08)",
+                    "--dp-border-hover": `${color}30`,
+                    "--dp-shadow": "none",
+                    "--dp-shadow-hover": `0 8px 32px rgba(0,0,0,0.40), 0 0 0 1px ${color}20`,
+                  } as React.CSSProperties}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div

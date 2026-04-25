@@ -36,7 +36,7 @@ Analyze this scenario specifically in context of the user's actual spending. Be 
       }
     }
 
-    const prompt = `You are DollarPaisa's What-If Financial Analysis Engine, a world-class economic analyst. Analyze this hypothetical scenario with deep financial expertise.
+    const prompt = `You are DollarPilot's What-If Financial Analysis Engine, a world-class economic analyst. Analyze this hypothetical scenario with deep financial expertise.
 
 Scenario: "${scenario}"${statementContext}
 

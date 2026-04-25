@@ -12,7 +12,6 @@ import {
   Flame,
   LineChart,
   Receipt,
-  Settings,
   LogOut,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -28,7 +27,6 @@ const menu = [
 ];
 
 const general = [
-  { href: "/settings", label: "Settings", icon: Settings },
   { href: "/help",     label: "Help",     icon: HelpCircle },
 ];
 
@@ -49,24 +47,25 @@ function NavIcon({
       title={label}
       className={cn(
         "group relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-150",
+        "hover:-translate-y-px active:translate-y-0 active:scale-[0.96]",
         active
-          ? "bg-[rgba(52,211,153,0.18)] shadow-[0_0_12px_rgba(52,211,153,0.25)]"
-          : "hover:bg-white/8"
+          ? "bg-[rgba(16,185,129,0.18)] shadow-[0_0_12px_rgba(16,185,129,0.22)]"
+          : "hover:bg-[rgba(24,61,42,0.55)]"
       )}
       style={!active ? { "--tw-bg-opacity": "1" } as React.CSSProperties : undefined}
     >
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[#34d399] shadow-[0_0_8px_#34d399]" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[#10B981] shadow-[0_0_8px_#10B981]" />
       )}
       <Icon
         className={cn(
           "h-[18px] w-[18px] transition-colors",
-          active ? "text-[#34d399]" : "text-white/40 group-hover:text-white/70"
+          active ? "text-[#10B981]" : "text-white/40 group-hover:text-white/75"
         )}
       />
       {/* Tooltip */}
       <span className="pointer-events-none absolute left-full ml-3 z-50 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-semibold text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-        style={{ background: "rgba(10,10,30,0.95)", border: "1px solid rgba(255,255,255,0.1)" }}>
+        style={{ background: "rgba(6,20,13,0.95)", border: "1px solid rgba(249,250,251,0.10)" }}>
         {label}
       </span>
     </Link>
@@ -80,16 +79,16 @@ export function Sidebar() {
     <aside
       className="flex h-screen w-[64px] shrink-0 flex-col items-center py-4 gap-1 z-40"
       style={{
-        background: "rgba(6,6,26,0.75)",
+        background: "rgba(6,20,13,0.76)",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
-        borderRight: "1px solid rgba(255,255,255,0.07)",
+        borderRight: "1px solid rgba(249,250,251,0.08)",
       }}
     >
       {/* Logo */}
       <Link href="/dashboard" className="mb-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden"
-        style={{ background: "rgba(52,211,153,0.15)", border: "1px solid rgba(52,211,153,0.25)" }}>
-        <Image src="/logo.png" alt="DollarPaisa" width={36} height={36} className="object-contain scale-110" />
+        style={{ background: "rgba(16,185,129,0.16)", border: "1px solid rgba(16,185,129,0.28)" }}>
+        <Image src="/logo.png" alt="DollarPilot" width={36} height={36} className="object-contain scale-110" />
       </Link>
 
       {/* Thin divider */}
@@ -111,11 +110,11 @@ export function Sidebar() {
         <button
           title="Logout"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="group relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-150 hover:bg-red-500/10"
+          className="group relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-150 hover:bg-red-500/10 hover:-translate-y-px active:translate-y-0 active:scale-[0.96]"
         >
           <LogOut className="h-[18px] w-[18px] text-white/35 group-hover:text-red-400 transition-colors" />
           <span className="pointer-events-none absolute left-full ml-3 z-50 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-semibold text-white opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-            style={{ background: "rgba(10,10,30,0.95)", border: "1px solid rgba(255,255,255,0.1)" }}>
+            style={{ background: "rgba(6,20,13,0.95)", border: "1px solid rgba(249,250,251,0.10)" }}>
             Logout
           </span>
         </button>
