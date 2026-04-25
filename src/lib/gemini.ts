@@ -12,17 +12,12 @@ const FLASH_MODELS = [
   "gemini-2.5-flash",
   "gemini-2.0-flash",
   "gemini-2.0-flash-lite",
-  "gemini-1.5-flash-latest",
-  "gemini-1.5-flash",
 ];
 
 const PRO_MODELS = [
-  "gemini-2.5-flash",
   "gemini-2.5-pro",
-  "gemini-2.0-pro",
-  "gemini-2.0-pro-exp",
-  "gemini-1.5-pro-latest",
-  "gemini-1.5-pro",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
 ];
 
 // Permissive settings for roast mode — allows comedic/satirical content
@@ -33,8 +28,13 @@ export const ROAST_SAFETY: SafetySetting[] = [
   { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
 ];
 
+/** True for 404-style "model unavailable" errors — used to skip to the next fallback model. */
 function isModelError(err: unknown): boolean {
   const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  // Exclude quota/rate-limit errors — those are NOT model availability issues
+  if (msg.includes("429") || msg.includes("too many requests") || msg.includes("quota")) {
+    return false;
+  }
   return (
     msg.includes("not found") ||
     msg.includes("deprecated") ||
@@ -43,6 +43,12 @@ function isModelError(err: unknown): boolean {
     msg.includes("invalid model") ||
     msg.includes("models/")
   );
+}
+
+/** True for 429 quota/rate-limit errors — try the next model, it may have a separate quota. */
+function isQuotaError(err: unknown): boolean {
+  const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  return msg.includes("429") || msg.includes("too many requests") || msg.includes("quota");
 }
 
 export async function generateText(
@@ -61,9 +67,12 @@ export async function generateText(
       return result.response.text();
     } catch (err) {
       lastError = err;
-      if (isModelError(err)) continue;
+      if (isModelError(err) || isQuotaError(err)) continue;
       throw err;
     }
+  }
+  if (isQuotaError(lastError)) {
+    throw new Error("AI quota exceeded. Please wait a moment and try again.");
   }
   throw lastError ?? new Error("All Gemini models unavailable");
 }
@@ -85,9 +94,12 @@ export async function generateFromPDF(
       return result.response.text();
     } catch (err) {
       lastError = err;
-      if (isModelError(err)) continue;
+      if (isModelError(err) || isQuotaError(err)) continue;
       throw err;
     }
+  }
+  if (isQuotaError(lastError)) {
+    throw new Error("AI quota exceeded. Please wait a moment and try again.");
   }
   throw lastError ?? new Error("All Gemini models unavailable");
 }
@@ -102,9 +114,13 @@ export async function generateStream(prompt: string) {
       return result.stream;
     } catch (err) {
       lastError = err;
-      if (isModelError(err)) continue;
+      if (isModelError(err) || isQuotaError(err)) continue;
       throw err;
     }
   }
+  if (isQuotaError(lastError)) {
+    throw new Error("AI quota exceeded. Please wait a moment and try again.");
+  }
   throw lastError ?? new Error("All Gemini stream models unavailable");
 }
+

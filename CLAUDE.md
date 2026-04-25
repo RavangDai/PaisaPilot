@@ -16,7 +16,7 @@ AI-powered personal finance web app. Full-stack Next.js 16 with MongoDB, NextAut
 | Font | **Plus Jakarta Sans** via `next/font/google` in `layout.tsx` (NOT CSS `@import`) |
 | Auth | **NextAuth v5 beta** (`next-auth@5.0.0-beta`) + `@auth/mongodb-adapter` |
 | Database | **MongoDB Atlas** via `mongoose` v9 + native `mongodb` v6 driver |
-| AI | **Google Gemini** via `@google/generative-ai` (gemini-1.5-flash / gemini-1.5-pro / gemini-2.5-flash) |
+| AI | **Google Gemini** via `@google/generative-ai` (gemini-2.5-flash / gemini-2.5-pro / gemini-2.0-*) |
 | Markets | **yahoo-finance2 v3** for stocks + **CoinGecko public API** for crypto |
 | Charts | **Recharts** (AreaChart, ComposedChart, LineChart, Bar) |
 | Icons | **lucide-react** |
