@@ -15,7 +15,7 @@ interface Scenario {
 
 const PREBUILT: Scenario[] = [
   {
-    icon: <img src="/apple-icon.ico" alt="Apple" width={32} height={32} className="rounded-lg" style={{ objectFit: "contain" }} />,
+    icon: <img src="/apple.ico" alt="Apple" width={32} height={32} className="rounded-lg" style={{ objectFit: "contain" }} />,
     title: "Apple goes bankrupt tomorrow",
     q: "What if Apple Inc went bankrupt tomorrow?",
   },
