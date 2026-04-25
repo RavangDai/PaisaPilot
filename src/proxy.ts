@@ -7,7 +7,9 @@ export const proxy = auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
   const isPublic =
-    publicPaths.includes(pathname) || pathname.startsWith("/api/auth");
+    publicPaths.includes(pathname) ||
+    pathname.startsWith("/api/auth") ||
+    pathname === "/api/register";
 
   if (!isLoggedIn && !isPublic) {
     return NextResponse.redirect(new URL("/login", req.url));
