@@ -107,7 +107,9 @@ Analyze and compare these two financial options.`;
     await ChatMessageModel.create({ sessionId: chatSessionId, userId: session.user.id, role: "assistant", content: reply });
 
     return NextResponse.json({ reply, sessionId: chatSessionId });
-  } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Internal server error";
+    console.error("[coach]", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

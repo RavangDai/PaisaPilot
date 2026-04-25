@@ -52,7 +52,9 @@ Requirements: exactly 5 immediateEffects, 6 stocksAffected (mix up/down), 4 sect
     if (!parsed) return NextResponse.json({ error: "Analysis failed. Try rephrasing your scenario." }, { status: 500 });
 
     return NextResponse.json(parsed);
-  } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Internal server error";
+    console.error("[whatif]", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

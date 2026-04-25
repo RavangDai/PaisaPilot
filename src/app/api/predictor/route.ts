@@ -10,14 +10,19 @@ export async function POST(req: NextRequest) {
     const { ticker } = await req.json();
     if (!ticker) return NextResponse.json({ error: "Ticker symbol is required" }, { status: 400 });
 
-    const prompt = `You are a financial analysis AI. Analyze the stock ticker "${ticker.toUpperCase()}" and provide:
-1. A brief company overview (2-3 sentences)
-2. Key financial metrics to watch
-3. Recent market sentiment (bullish/bearish/neutral) with reasoning
-4. A 3-month price outlook with a target range
-5. Main risks and opportunities
+    const prompt = `You are a financial analysis AI. Analyze the stock ticker "${ticker.toUpperCase()}" and return ONLY valid JSON with exactly these keys and value types:
 
-Format your response as JSON with these keys: company, metrics, sentiment, outlook, risks, opportunities. Be realistic and data-driven.`;
+{
+  "company": "string — 2-3 sentence company overview",
+  "sentiment": "string — exactly one of: Bullish, Bearish, or Neutral",
+  "sentimentReason": "string — one sentence explaining the sentiment",
+  "outlook": "string — 3-month price outlook with a target range",
+  "metrics": ["string", "string", "string"],
+  "risks": ["string", "string", "string"],
+  "opportunities": ["string", "string", "string"]
+}
+
+All values must be strings or arrays of strings. Do not nest objects. Be realistic and data-driven.`;
 
     const raw = await generateText(prompt, "pro");
 

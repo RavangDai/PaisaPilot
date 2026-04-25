@@ -104,7 +104,9 @@ Roast this person's finances HARD in your persona's voice. Return ONLY valid JSO
     });
 
     return NextResponse.json({ ...parsed, personaLabel: personaData.label, spiritAnimal: personaData.spiritAnimal });
-  } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Internal server error";
+    console.error("[roast]", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

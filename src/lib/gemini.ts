@@ -1,17 +1,77 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+function getClient() {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY is not configured");
+  }
+  return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+}
 
-export const geminiPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-export const geminiFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// Newest models first — falls through on 404/deprecated errors
+const FLASH_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+  "gemini-1.5-flash-latest",
+  "gemini-1.5-flash",
+];
 
-export async function generateText(prompt: string, model: "pro" | "flash" = "flash"): Promise<string> {
-  const m = model === "pro" ? geminiPro : geminiFlash;
-  const result = await m.generateContent(prompt);
-  return result.response.text();
+const PRO_MODELS = [
+  "gemini-2.5-flash",
+  "gemini-2.5-pro",
+  "gemini-2.0-pro",
+  "gemini-2.0-pro-exp",
+  "gemini-1.5-pro-latest",
+  "gemini-1.5-pro",
+];
+
+function isModelError(err: unknown): boolean {
+  const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  return (
+    msg.includes("not found") ||
+    msg.includes("deprecated") ||
+    msg.includes("not supported") ||
+    msg.includes("404") ||
+    msg.includes("invalid model") ||
+    msg.includes("models/")
+  );
+}
+
+export async function generateText(
+  prompt: string,
+  model: "pro" | "flash" = "flash"
+): Promise<string> {
+  const client = getClient();
+  const candidates = model === "pro" ? PRO_MODELS : FLASH_MODELS;
+
+  let lastError: unknown;
+  for (const modelName of candidates) {
+    try {
+      const m = client.getGenerativeModel({ model: modelName });
+      const result = await m.generateContent(prompt);
+      return result.response.text();
+    } catch (err) {
+      lastError = err;
+      if (isModelError(err)) continue;
+      throw err;
+    }
+  }
+  throw lastError ?? new Error("All Gemini models unavailable");
 }
 
 export async function generateStream(prompt: string) {
-  const result = await geminiFlash.generateContentStream(prompt);
-  return result.stream;
+  const client = getClient();
+  let lastError: unknown;
+  for (const modelName of FLASH_MODELS) {
+    try {
+      const m = client.getGenerativeModel({ model: modelName });
+      const result = await m.generateContentStream(prompt);
+      return result.stream;
+    } catch (err) {
+      lastError = err;
+      if (isModelError(err)) continue;
+      throw err;
+    }
+  }
+  throw lastError ?? new Error("All Gemini stream models unavailable");
 }

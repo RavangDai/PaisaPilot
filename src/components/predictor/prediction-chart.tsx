@@ -15,17 +15,27 @@ interface PredictionData {
   };
 }
 
+function str(val: unknown): string {
+  if (typeof val === "string") return val;
+  if (val && typeof val === "object") {
+    const v = val as Record<string, unknown>;
+    return String(v.overall ?? v.value ?? v.label ?? v.text ?? Object.values(v)[0] ?? "");
+  }
+  return String(val ?? "");
+}
+
 export function PredictionChart({ data }: { data: PredictionData }) {
   const { ticker, analysis } = data;
-  const sentiment = (analysis.sentiment ?? "").toLowerCase();
+  const sentiment = str(analysis.sentiment).toLowerCase();
   const isBullish = sentiment.includes("bull");
   const isBearish = sentiment.includes("bear");
 
+  const sentimentLabel = str(analysis.sentiment) || "Neutral";
   const sentimentConfig = isBullish
-    ? { icon: TrendingUp, color: "#16a34a", bg: "#EAF4EE", label: analysis.sentiment }
+    ? { icon: TrendingUp, color: "#16a34a", bg: "#EAF4EE", label: sentimentLabel }
     : isBearish
-    ? { icon: TrendingDown, color: "#dc2626", bg: "#FEF2F2", label: analysis.sentiment }
-    : { icon: Minus, color: "#d97706", bg: "#FFFBEB", label: analysis.sentiment ?? "Neutral" };
+    ? { icon: TrendingDown, color: "#dc2626", bg: "#FEF2F2", label: sentimentLabel }
+    : { icon: Minus, color: "#d97706", bg: "#FFFBEB", label: sentimentLabel };
 
   const SentimentIcon = sentimentConfig.icon;
 
@@ -37,7 +47,7 @@ export function PredictionChart({ data }: { data: PredictionData }) {
           <div>
             <h2 className="text-2xl font-bold text-[#111917]">{ticker}</h2>
             {analysis.company && (
-              <p className="text-sm text-[#5A6A62] mt-0.5 max-w-lg">{analysis.company}</p>
+              <p className="text-sm text-[#5A6A62] mt-0.5 max-w-lg">{str(analysis.company)}</p>
             )}
           </div>
           <div
@@ -55,7 +65,7 @@ export function PredictionChart({ data }: { data: PredictionData }) {
             <p className="text-xs font-semibold text-[#5A6A62] uppercase tracking-wide mb-1">
               3-Month Outlook
             </p>
-            <p className="text-sm text-[#111917] leading-relaxed">{analysis.outlook}</p>
+            <p className="text-sm text-[#111917] leading-relaxed">{str(analysis.outlook)}</p>
           </div>
         )}
       </div>
@@ -74,7 +84,7 @@ export function PredictionChart({ data }: { data: PredictionData }) {
               {analysis.opportunities.map((o, i) => (
                 <li key={i} className="flex gap-2 text-sm text-[#1B5E39]">
                   <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#1B5E39] shrink-0" />
-                  {o}
+                  {str(o)}
                 </li>
               ))}
             </ul>
@@ -94,7 +104,7 @@ export function PredictionChart({ data }: { data: PredictionData }) {
               {analysis.risks.map((r, i) => (
                 <li key={i} className="flex gap-2 text-sm text-red-700">
                   <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 shrink-0" />
-                  {r}
+                  {str(r)}
                 </li>
               ))}
             </ul>

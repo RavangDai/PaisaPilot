@@ -72,8 +72,12 @@ export function ChatInterface() {
         body: JSON.stringify({ message, sessionId }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setMessages((prev) => [...prev, { role: "assistant", content: `⚠️ AI error: ${data.error ?? "Something went wrong. Please try again."}` }]);
+        return;
+      }
       if (data.sessionId) setSessionId(data.sessionId);
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply ?? "Sorry, something went wrong." }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply ?? "No response received." }]);
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "Network error. Please try again." }]);
     } finally {
