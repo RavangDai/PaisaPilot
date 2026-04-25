@@ -87,12 +87,15 @@ body {
 
 /* ── Hover state overrides ─────────────────────────────────────── */
 
-.hover\:bg-\[\#F0F2F1\]:hover  { background: rgba(255,255,255,0.07) !important; }
-.hover\:bg-\[\#F5F7F6\]:hover  { background: rgba(255,255,255,0.07) !important; }
-.hover\:bg-\[\#EAF4EE\]:hover  { background: rgba(52,211,153,0.1) !important; }
+.hover\:bg-white:hover          { background: rgba(255,255,255,0.13) !important; }
+.hover\:bg-\[\#F0F2F1\]:hover  { background: rgba(255,255,255,0.08) !important; }
+.hover\:bg-\[\#F5F7F6\]:hover  { background: rgba(255,255,255,0.08) !important; }
+.hover\:bg-\[\#F8FAF9\]:hover  { background: rgba(255,255,255,0.09) !important; }
+.hover\:bg-\[\#EAF4EE\]:hover  { background: rgba(52,211,153,0.12) !important; }
 .hover\:bg-\[\#FEF2F2\]:hover  { background: rgba(220,38,38,0.1) !important; }
 .hover\:text-\[\#111917\]:hover { color: #ffffff !important; }
 .hover\:text-\[\#1B5E39\]:hover { color: #34d399 !important; }
+.hover\:text-\[\#5A6A62\]:hover { color: rgba(255,255,255,0.7) !important; }
 .hover\:border-\[\#1B5E39\]:hover { border-color: #34d399 !important; }
 
 /* ── Shadow overrides ──────────────────────────────────────────── */
@@ -189,11 +192,11 @@ select option {
 /* ── Subtle hover lift on all glass cards ──────────────────────── */
 
 .bg-white {
-  transition: box-shadow 0.2s ease, background 0.2s ease !important;
+  transition: box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease !important;
 }
 .bg-white:hover {
-  background: rgba(255,255,255,0.10) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.09), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  background: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(52,211,153,0.12), inset 0 1px 0 rgba(255,255,255,0.10) !important;
 }
 
 /* ── Glass utility class ───────────────────────────────────────── */

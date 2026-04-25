@@ -476,17 +476,23 @@ export default function RoastPage() {
 
               {error && <div className="rounded-xl bg-red-50 border border-red-100 px-3.5 py-2.5 text-sm text-red-600">{error}</div>}
 
-              <Button
+              <button
                 onClick={handleRoast}
                 disabled={loading || !canRoast}
-                size="lg"
-                className="w-full rounded-xl gap-2 bg-[#111917] hover:bg-black text-white"
+                className="w-full rounded-xl gap-2 flex items-center justify-center py-3.5 text-[15px] font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  background: loading || !canRoast
+                    ? "rgba(255,255,255,0.1)"
+                    : `linear-gradient(135deg, ${selectedPersona.color}cc, ${selectedPersona.color}88)`,
+                  border: `1px solid ${selectedPersona.color}55`,
+                  boxShadow: loading || !canRoast ? "none" : `0 0 24px ${selectedPersona.color}33`,
+                }}
               >
                 {loading
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Getting roasted…</>
-                  : <><Flame className="h-4 w-4" /> Roast Me, {selectedPersona.name}</>
+                  ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Getting roasted…</>
+                  : <><Flame className="h-4 w-4 mr-2" /> Roast Me, {selectedPersona.name}</>
                 }
-              </Button>
+              </button>
               {inputMode === "pdf" && !pdfFile && (
                 <p className="text-center text-xs text-[#94A39A]">Upload a PDF to continue</p>
               )}

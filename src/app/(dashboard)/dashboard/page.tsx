@@ -12,6 +12,7 @@ import {
   Sparkles,
   TrendingDown,
   DollarSign,
+  LineChart,
 } from "lucide-react";
 
 const statCards = [
@@ -20,7 +21,7 @@ const statCards = [
     value: "0",
     sub: "Start your first chat",
     icon: MessageSquare,
-    hero: true,
+    accent: "#34d399",
     href: "/coach",
   },
   {
@@ -28,7 +29,7 @@ const statCards = [
     value: "0",
     sub: "Explore a what-if",
     icon: HelpCircle,
-    hero: false,
+    accent: "#a78bfa",
     href: "/simulator",
   },
   {
@@ -36,7 +37,7 @@ const statCards = [
     value: "0",
     sub: "Search a ticker",
     icon: BarChart2,
-    hero: false,
+    accent: "#60a5fa",
     href: "/predictor",
   },
   {
@@ -44,7 +45,7 @@ const statCards = [
     value: "0",
     sub: "Pick a persona",
     icon: Flame,
-    hero: false,
+    accent: "#fb923c",
     href: "/roast",
   },
 ];
@@ -54,8 +55,7 @@ const features = [
     href: "/coach",
     icon: MessageSquare,
     title: "AI Finance Coach",
-    description:
-      "Ask anything: budgeting, saving, investing, or debt. Get clear, personalized advice in seconds.",
+    description: "Ask anything: budgeting, saving, investing, or debt. Get clear, personalized advice in seconds.",
     tag: "Chat",
     color: "#34d399",
     bg: "rgba(52,211,153,0.12)",
@@ -64,28 +64,34 @@ const features = [
     href: "/simulator",
     icon: HelpCircle,
     title: "What If Scenarios",
-    description:
-      "Stress-test global events against your portfolio: Apple bankrupt, war, Bitcoin $1M, and more.",
+    description: "Stress-test global events against your portfolio: Apple bankrupt, war, Bitcoin $1M, and more.",
     tag: "What If",
     color: "#a78bfa",
     bg: "rgba(124,58,237,0.12)",
   },
   {
+    href: "/markets",
+    icon: LineChart,
+    title: "Live Markets",
+    description: "Track stocks and crypto in real time with interactive charts, price history, and market indices.",
+    tag: "Markets",
+    color: "#60a5fa",
+    bg: "rgba(59,130,246,0.12)",
+  },
+  {
     href: "/predictor",
     icon: BarChart2,
     title: "Stock Predictor",
-    description:
-      "AI-powered sentiment analysis on any ticker: outlook, risks, and opportunities explained.",
+    description: "AI-powered sentiment analysis on any ticker: outlook, risks, and opportunities explained.",
     tag: "Analyze",
-    color: "#60a5fa",
-    bg: "rgba(59,130,246,0.12)",
+    color: "#c084fc",
+    bg: "rgba(192,132,252,0.12)",
   },
   {
     href: "/expenses",
     icon: Receipt,
     title: "Expense Tracker",
-    description:
-      "Upload a bank statement PDF and get an AI-powered breakdown of spending by category and merchant.",
+    description: "Upload a bank statement PDF and get an AI-powered breakdown of spending by category and merchant.",
     tag: "Track",
     color: "#34d399",
     bg: "rgba(52,211,153,0.12)",
@@ -94,8 +100,7 @@ const features = [
     href: "/roast",
     icon: Flame,
     title: "Roast My Finances",
-    description:
-      "Pick a persona and get your spending habits mercilessly judged by a Wall Street bro or Skynet.",
+    description: "Pick a persona and get your spending habits mercilessly judged by a Wall Street bro or Skynet.",
     tag: "Roast",
     color: "#fb923c",
     bg: "rgba(249,115,22,0.12)",
@@ -103,9 +108,9 @@ const features = [
 ];
 
 const tips = [
-  { icon: DollarSign, text: "Save at least 20% of your income each month." },
-  { icon: TrendingDown, text: "High-interest debt costs more than investments earn." },
-  { icon: Sparkles, text: "Compound interest doubles money roughly every 9 years at 8%." },
+  { icon: DollarSign, text: "Save at least 20% of your income each month.", color: "#34d399" },
+  { icon: TrendingDown, text: "High-interest debt costs more than most investments can earn.", color: "#f87171" },
+  { icon: Sparkles, text: "Compound interest doubles money roughly every 9 years at 8% annual returns.", color: "#a78bfa" },
 ];
 
 export default async function DashboardPage() {
@@ -118,20 +123,35 @@ export default async function DashboardPage() {
     <div className="flex flex-col min-h-full">
       <TopNav title="Dashboard" />
 
-      <div className="flex-1 p-6 space-y-6 max-w-[1200px]">
-        {/* Header */}
-        <div className="flex items-start justify-between">
+      <div className="flex-1 overflow-y-auto p-6 space-y-7">
+
+        {/* Hero greeting */}
+        <div
+          className="rounded-2xl px-7 py-6 flex items-center justify-between gap-4"
+          style={{
+            background: "rgba(52,211,153,0.07)",
+            border: "1px solid rgba(52,211,153,0.15)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)",
+          }}
+        >
           <div>
-            <h1 className="text-2xl font-bold text-[#111917]">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#34d399" }}>
+              Welcome back
+            </p>
+            <h1 className="text-2xl font-extrabold text-white leading-tight">
               Good to see you, {firstName}
             </h1>
-            <p className="text-sm text-[#5A6A62] mt-1">
+            <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
               Your AI-powered financial co-pilot is ready.
             </p>
           </div>
           <Link
             href="/coach"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#1B5E39] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#154d2f] transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-[#06061a] shrink-0 transition-all hover:scale-[1.03]"
+            style={{
+              background: "linear-gradient(135deg, #34d399, #10b981)",
+              boxShadow: "0 0 20px rgba(52,211,153,0.35)",
+            }}
           >
             <Sparkles className="h-4 w-4" />
             Ask AI Coach
@@ -139,54 +159,44 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-4 gap-4">
-          {statCards.map(({ label, value, sub, icon: Icon, hero, href }) => (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {statCards.map(({ label, value, sub, icon: Icon, accent, href }) => (
             <Link key={href} href={href}>
               <div
-                className={`relative rounded-2xl p-5 transition-all duration-150 hover:scale-[1.02] cursor-pointer overflow-hidden ${
-                  hero
-                    ? "bg-[#1B5E39] text-white shadow-lg"
-                    : "bg-white border border-[#E4E7E5] shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]"
-                }`}
+                className="relative rounded-2xl p-5 cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: `1px solid ${accent}22`,
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  boxShadow: `0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = `${accent}44`;
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.09)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = `${accent}22`;
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
+                }}
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-4">
                   <div
-                    className={`flex h-9 w-9 items-center justify-center rounded-xl ${
-                      hero ? "bg-white/15" : "bg-[#EAF4EE]"
-                    }`}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl"
+                    style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
                   >
-                    <Icon
-                      className={`h-4 w-4 ${hero ? "text-white" : "text-[#1B5E39]"}`}
-                    />
+                    <Icon className="h-4 w-4" style={{ color: accent }} />
                   </div>
-                  <ArrowUpRight
-                    className={`h-4 w-4 ${hero ? "text-white/50" : "text-[#94A39A]"}`}
-                  />
+                  <ArrowUpRight className="h-4 w-4" style={{ color: "rgba(255,255,255,0.2)" }} />
                 </div>
-                <p
-                  className={`text-3xl font-bold mb-1 ${
-                    hero ? "text-white" : "text-[#111917]"
-                  }`}
-                >
-                  {value}
-                </p>
-                <p
-                  className={`text-xs font-medium ${
-                    hero ? "text-white/70" : "text-[#5A6A62]"
-                  }`}
-                >
-                  {label}
-                </p>
-                <p
-                  className={`text-[11px] mt-0.5 ${
-                    hero ? "text-white/50" : "text-[#94A39A]"
-                  }`}
-                >
-                  {sub}
-                </p>
-                {hero && (
-                  <div className="absolute -right-4 -bottom-4 h-20 w-20 rounded-full bg-white/5" />
-                )}
+                <p className="text-3xl font-extrabold text-white leading-none mb-1">{value}</p>
+                <p className="text-[12px] font-semibold" style={{ color: "rgba(255,255,255,0.65)" }}>{label}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.32)" }}>{sub}</p>
+                {/* Accent glow corner */}
+                <div
+                  className="absolute -right-5 -bottom-5 h-20 w-20 rounded-full blur-2xl"
+                  style={{ background: `${accent}15` }}
+                />
               </div>
             </Link>
           ))}
@@ -194,32 +204,55 @@ export default async function DashboardPage() {
 
         {/* Features Grid */}
         <div>
-          <h2 className="text-base font-semibold text-[#111917] mb-3">Features</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-3 mb-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.35)" }}>
+              Features
+            </p>
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(({ href, icon: Icon, title, description, tag, color, bg }) => (
               <Link key={href} href={href}>
-                <div className="group rounded-2xl border border-[#E4E7E5] bg-white p-5 hover:border-[#C9D4CE] hover:shadow-[0_4px_12px_0_rgb(0,0,0,0.08)] transition-all duration-200 cursor-pointer h-full">
-                  <div className="flex items-start gap-4">
+                <div
+                  className="group rounded-2xl p-5 cursor-pointer h-full transition-all duration-200"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    backdropFilter: "blur(20px)",
+                    WebkitBackdropFilter: "blur(20px)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.09)";
+                    (e.currentTarget as HTMLElement).style.borderColor = `${color}30`;
+                    (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px ${color}20`;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-3">
                     <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-                      style={{ backgroundColor: bg }}
+                      className="flex h-10 w-10 items-center justify-center rounded-xl"
+                      style={{ backgroundColor: bg, border: `1px solid ${color}25` }}
                     >
                       <Icon className="h-5 w-5" style={{ color }} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="text-[15px] font-semibold text-[#111917]">{title}</p>
-                        <span
-                          className="text-[10px] font-semibold px-2 py-0.5 rounded-md"
-                          style={{ backgroundColor: bg, color }}
-                        >
-                          {tag}
-                        </span>
-                      </div>
-                      <p className="text-sm text-[#5A6A62] leading-relaxed">{description}</p>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-md"
+                        style={{ backgroundColor: bg, color }}
+                      >
+                        {tag}
+                      </span>
+                      <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color }} />
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-[#C9D4CE] group-hover:text-[#5A6A62] transition-colors shrink-0" />
                   </div>
+                  <p className="text-[14px] font-bold text-white mb-1.5">{title}</p>
+                  <p className="text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.48)" }}>
+                    {description}
+                  </p>
                 </div>
               </Link>
             ))}
@@ -228,21 +261,36 @@ export default async function DashboardPage() {
 
         {/* Tips */}
         <div>
-          <h2 className="text-base font-semibold text-[#111917] mb-3">Financial Tips</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {tips.map(({ icon: Icon, text }, i) => (
+          <div className="flex items-center gap-3 mb-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.35)" }}>
+              Quick Tips
+            </p>
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {tips.map(({ icon: Icon, text, color }, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-[#E4E7E5] bg-white p-4 flex items-start gap-3"
+                className="rounded-2xl p-4 flex items-start gap-3"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#EAF4EE]">
-                  <Icon className="h-4 w-4 text-[#1B5E39]" />
+                <div
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl mt-0.5"
+                  style={{ background: `${color}15`, border: `1px solid ${color}25` }}
+                >
+                  <Icon className="h-4 w-4" style={{ color }} />
                 </div>
-                <p className="text-xs text-[#5A6A62] leading-relaxed pt-0.5">{text}</p>
+                <p className="text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+                  {text}
+                </p>
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
