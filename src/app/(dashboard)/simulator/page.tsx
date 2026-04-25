@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { TopNav } from "@/components/layout/top-nav";
 import { Button } from "@/components/ui/button";
 import { Loader2, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2, Swords, DollarSign, Coins, Bot, Globe2 } from "lucide-react";
@@ -16,7 +15,7 @@ interface Scenario {
 
 const PREBUILT: Scenario[] = [
   {
-    icon: <Image src="/apple-icon.ico" alt="Apple" width={32} height={32} className="rounded-lg" />,
+    icon: <img src="/apple-icon.ico" alt="Apple" width={32} height={32} className="rounded-lg" style={{ objectFit: "contain" }} />,
     title: "Apple goes bankrupt tomorrow",
     q: "What if Apple Inc went bankrupt tomorrow?",
   },

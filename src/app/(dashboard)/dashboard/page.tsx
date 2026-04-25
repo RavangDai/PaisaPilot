@@ -4,7 +4,7 @@ import { TopNav } from "@/components/layout/top-nav";
 import Link from "next/link";
 import {
   MessageSquare,
-  TrendingUp,
+  Zap,
   BarChart2,
   Flame,
   ArrowUpRight,
@@ -23,10 +23,10 @@ const statCards = [
     href: "/coach",
   },
   {
-    label: "Simulations Run",
+    label: "Scenarios Analyzed",
     value: "0",
-    sub: "Build a scenario",
-    icon: TrendingUp,
+    sub: "Explore a what-if",
+    icon: Zap,
     hero: false,
     href: "/simulator",
   },
@@ -41,7 +41,7 @@ const statCards = [
   {
     label: "Finances Roasted",
     value: "0",
-    sub: "Upload a statement",
+    sub: "Pick a persona",
     icon: Flame,
     hero: false,
     href: "/roast",
@@ -56,18 +56,18 @@ const features = [
     description:
       "Ask anything — budgeting, saving, investing, or debt. Get clear, personalized advice in seconds.",
     tag: "Chat",
-    color: "#1B5E39",
-    bg: "#EAF4EE",
+    color: "#34d399",
+    bg: "rgba(52,211,153,0.12)",
   },
   {
     href: "/simulator",
-    icon: TrendingUp,
-    title: "Investment Simulator",
+    icon: Zap,
+    title: "What If Scenarios",
     description:
-      "Model your wealth growth over time. Adjust returns, contributions, and timeframes visually.",
-    tag: "Simulate",
-    color: "#4338ca",
-    bg: "#EEF2FF",
+      "Stress-test global events against your portfolio — Apple bankrupt, war, Bitcoin $1M, and more.",
+    tag: "What If",
+    color: "#a78bfa",
+    bg: "rgba(124,58,237,0.12)",
   },
   {
     href: "/predictor",
@@ -76,18 +76,18 @@ const features = [
     description:
       "AI-powered sentiment analysis on any ticker — outlook, risks, and opportunities explained.",
     tag: "Analyze",
-    color: "#0369a1",
-    bg: "#E0F2FE",
+    color: "#60a5fa",
+    bg: "rgba(59,130,246,0.12)",
   },
   {
     href: "/roast",
     icon: Flame,
     title: "Roast My Finances",
     description:
-      "Upload a bank statement and receive a brutally honest (and hilariously accurate) AI review.",
+      "Pick a persona and get your spending habits mercilessly judged by a Wall Street bro or Skynet.",
     tag: "Roast",
-    color: "#b45309",
-    bg: "#FFFBEB",
+    color: "#fb923c",
+    bg: "rgba(249,115,22,0.12)",
   },
 ];
 
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold text-[#111917]">
-              Good to see you, {firstName} 👋
+              Good to see you, {firstName}
             </h1>
             <p className="text-sm text-[#5A6A62] mt-1">
               Your AI-powered financial co-pilot is ready.
