@@ -4,33 +4,35 @@ import { useState } from "react";
 import { TopNav } from "@/components/layout/top-nav";
 import { TickerInput } from "@/components/predictor/ticker-input";
 import { PredictionChart } from "@/components/predictor/prediction-chart";
-import { Card, CardContent } from "@/components/ui/card";
+import { BarChart2 } from "lucide-react";
 
 export default function PredictorPage() {
   const [result, setResult] = useState<unknown>(null);
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
+    <div className="flex h-full flex-col">
       <TopNav title="Stock Predictor" />
-      <div className="flex-1 p-6 space-y-6">
-        <div>
-          <p className="text-sm text-zinc-400">AI-powered market sentiment and stock analysis using Gemini Pro.</p>
-          <p className="text-xs text-zinc-600 mt-1">For educational purposes only. Not financial advice.</p>
+      <div className="flex-1 overflow-y-auto p-6 space-y-5">
+        <div className="rounded-2xl border border-[#E4E7E5] bg-white shadow-[0_1px_3px_0_rgb(0,0,0,0.06)] p-5">
+          <p className="text-[15px] font-semibold text-[#111917] mb-1">Analyze a Stock</p>
+          <p className="text-xs text-[#5A6A62] mb-4">
+            Enter any ticker symbol for AI-powered sentiment analysis and outlook.
+          </p>
+          <TickerInput onResult={setResult} />
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <TickerInput onResult={setResult} />
-          </CardContent>
-        </Card>
-
-        {result && <PredictionChart data={result as Parameters<typeof PredictionChart>[0]["data"]} />}
-
-        {!result && (
-          <div className="flex h-40 items-center justify-center text-zinc-500 text-sm">
-            Enter a stock ticker above to get AI analysis
+        {result ? (
+          <PredictionChart data={result as Parameters<typeof PredictionChart>[0]["data"]} />
+        ) : (
+          <div className="flex h-48 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#D5DAD7] text-[#94A39A]">
+            <BarChart2 className="h-8 w-8 opacity-30" />
+            <p className="text-sm">Enter a ticker above to get AI analysis</p>
           </div>
         )}
+
+        <p className="text-xs text-[#94A39A] text-center">
+          For educational purposes only. Not financial advice. Always do your own research.
+        </p>
       </div>
     </div>
   );

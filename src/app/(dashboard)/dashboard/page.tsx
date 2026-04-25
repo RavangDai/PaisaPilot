@@ -1,42 +1,236 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { TopNav } from "@/components/layout/top-nav";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { MessageSquare, TrendingUp, BarChart2, Flame } from "lucide-react";
 import Link from "next/link";
+import {
+  MessageSquare,
+  TrendingUp,
+  BarChart2,
+  Flame,
+  ArrowUpRight,
+  Sparkles,
+  TrendingDown,
+  DollarSign,
+} from "lucide-react";
+
+const statCards = [
+  {
+    label: "AI Coach Sessions",
+    value: "0",
+    sub: "Start your first chat",
+    icon: MessageSquare,
+    hero: true,
+    href: "/coach",
+  },
+  {
+    label: "Simulations Run",
+    value: "0",
+    sub: "Build a scenario",
+    icon: TrendingUp,
+    hero: false,
+    href: "/simulator",
+  },
+  {
+    label: "Stocks Analyzed",
+    value: "0",
+    sub: "Search a ticker",
+    icon: BarChart2,
+    hero: false,
+    href: "/predictor",
+  },
+  {
+    label: "Finances Roasted",
+    value: "0",
+    sub: "Upload a statement",
+    icon: Flame,
+    hero: false,
+    href: "/roast",
+  },
+];
 
 const features = [
-  { href: "/coach", icon: MessageSquare, title: "AI Coach", description: "Get personalized financial advice powered by Gemini AI", color: "text-emerald-400" },
-  { href: "/simulator", icon: TrendingUp, title: "Investment Simulator", description: "Visualize your wealth growth with compound interest projections", color: "text-indigo-400" },
-  { href: "/predictor", icon: BarChart2, title: "Stock Predictor", description: "AI-powered stock analysis and market sentiment insights", color: "text-blue-400" },
-  { href: "/roast", icon: Flame, title: "Roast My Finances", description: "Upload your bank statement and get a brutally honest review", color: "text-orange-400" },
+  {
+    href: "/coach",
+    icon: MessageSquare,
+    title: "AI Finance Coach",
+    description:
+      "Ask anything — budgeting, saving, investing, or debt. Get clear, personalized advice in seconds.",
+    tag: "Chat",
+    color: "#1B5E39",
+    bg: "#EAF4EE",
+  },
+  {
+    href: "/simulator",
+    icon: TrendingUp,
+    title: "Investment Simulator",
+    description:
+      "Model your wealth growth over time. Adjust returns, contributions, and timeframes visually.",
+    tag: "Simulate",
+    color: "#4338ca",
+    bg: "#EEF2FF",
+  },
+  {
+    href: "/predictor",
+    icon: BarChart2,
+    title: "Stock Predictor",
+    description:
+      "AI-powered sentiment analysis on any ticker — outlook, risks, and opportunities explained.",
+    tag: "Analyze",
+    color: "#0369a1",
+    bg: "#E0F2FE",
+  },
+  {
+    href: "/roast",
+    icon: Flame,
+    title: "Roast My Finances",
+    description:
+      "Upload a bank statement and receive a brutally honest (and hilariously accurate) AI review.",
+    tag: "Roast",
+    color: "#b45309",
+    bg: "#FFFBEB",
+  },
+];
+
+const tips = [
+  { icon: DollarSign, text: "Save at least 20% of your income each month." },
+  { icon: TrendingDown, text: "High-interest debt costs more than investments earn." },
+  { icon: Sparkles, text: "Compound interest doubles money roughly every 9 years at 8%." },
 ];
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
+  const firstName = session.user?.name?.split(" ")[0] ?? "there";
+
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
+    <div className="flex flex-col min-h-full">
       <TopNav title="Dashboard" />
-      <div className="flex-1 p-6 space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-zinc-100">Welcome back, {session.user?.name?.split(" ")[0]} 👋</h2>
-          <p className="text-zinc-400 mt-1">What would you like to work on today?</p>
+
+      <div className="flex-1 p-6 space-y-6 max-w-[1200px]">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[#111917]">
+              Good to see you, {firstName} 👋
+            </h1>
+            <p className="text-sm text-[#5A6A62] mt-1">
+              Your AI-powered financial co-pilot is ready.
+            </p>
+          </div>
+          <Link
+            href="/coach"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#1B5E39] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#154d2f] transition-colors shadow-sm"
+          >
+            <Sparkles className="h-4 w-4" />
+            Ask AI Coach
+          </Link>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          {features.map(({ href, icon: Icon, title, description, color }) => (
+
+        {/* Stat Cards */}
+        <div className="grid grid-cols-4 gap-4">
+          {statCards.map(({ label, value, sub, icon: Icon, hero, href }) => (
             <Link key={href} href={href}>
-              <Card className="hover:border-zinc-600 transition-colors cursor-pointer h-full">
-                <CardHeader>
-                  <Icon className={`h-6 w-6 ${color} mb-2`} />
-                  <CardTitle>{title}</CardTitle>
-                  <CardDescription>{description}</CardDescription>
-                </CardHeader>
-                <CardContent />
-              </Card>
+              <div
+                className={`relative rounded-2xl p-5 transition-all duration-150 hover:scale-[1.02] cursor-pointer overflow-hidden ${
+                  hero
+                    ? "bg-[#1B5E39] text-white shadow-lg"
+                    : "bg-white border border-[#E4E7E5] shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]"
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-xl ${
+                      hero ? "bg-white/15" : "bg-[#EAF4EE]"
+                    }`}
+                  >
+                    <Icon
+                      className={`h-4 w-4 ${hero ? "text-white" : "text-[#1B5E39]"}`}
+                    />
+                  </div>
+                  <ArrowUpRight
+                    className={`h-4 w-4 ${hero ? "text-white/50" : "text-[#94A39A]"}`}
+                  />
+                </div>
+                <p
+                  className={`text-3xl font-bold mb-1 ${
+                    hero ? "text-white" : "text-[#111917]"
+                  }`}
+                >
+                  {value}
+                </p>
+                <p
+                  className={`text-xs font-medium ${
+                    hero ? "text-white/70" : "text-[#5A6A62]"
+                  }`}
+                >
+                  {label}
+                </p>
+                <p
+                  className={`text-[11px] mt-0.5 ${
+                    hero ? "text-white/50" : "text-[#94A39A]"
+                  }`}
+                >
+                  {sub}
+                </p>
+                {hero && (
+                  <div className="absolute -right-4 -bottom-4 h-20 w-20 rounded-full bg-white/5" />
+                )}
+              </div>
             </Link>
           ))}
+        </div>
+
+        {/* Features Grid */}
+        <div>
+          <h2 className="text-base font-semibold text-[#111917] mb-3">Features</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {features.map(({ href, icon: Icon, title, description, tag, color, bg }) => (
+              <Link key={href} href={href}>
+                <div className="group rounded-2xl border border-[#E4E7E5] bg-white p-5 hover:border-[#C9D4CE] hover:shadow-[0_4px_12px_0_rgb(0,0,0,0.08)] transition-all duration-200 cursor-pointer h-full">
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+                      style={{ backgroundColor: bg }}
+                    >
+                      <Icon className="h-5 w-5" style={{ color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-[15px] font-semibold text-[#111917]">{title}</p>
+                        <span
+                          className="text-[10px] font-semibold px-2 py-0.5 rounded-md"
+                          style={{ backgroundColor: bg, color }}
+                        >
+                          {tag}
+                        </span>
+                      </div>
+                      <p className="text-sm text-[#5A6A62] leading-relaxed">{description}</p>
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-[#C9D4CE] group-hover:text-[#5A6A62] transition-colors shrink-0" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Tips */}
+        <div>
+          <h2 className="text-base font-semibold text-[#111917] mb-3">Financial Tips</h2>
+          <div className="grid grid-cols-3 gap-3">
+            {tips.map(({ icon: Icon, text }, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-[#E4E7E5] bg-white p-4 flex items-start gap-3"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#EAF4EE]">
+                  <Icon className="h-4 w-4 text-[#1B5E39]" />
+                </div>
+                <p className="text-xs text-[#5A6A62] leading-relaxed pt-0.5">{text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

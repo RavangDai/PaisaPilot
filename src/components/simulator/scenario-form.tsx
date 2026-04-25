@@ -10,6 +10,14 @@ interface ScenarioFormProps {
   onResult: (data: ProjectionPoint[], name: string) => void;
 }
 
+const fields = [
+  { label: "Scenario Name", field: "name", type: "text", step: undefined },
+  { label: "Initial Amount ($)", field: "initialAmount", type: "number", step: "100" },
+  { label: "Monthly Contribution ($)", field: "monthlyContribution", type: "number", step: "50" },
+  { label: "Annual Return Rate (%)", field: "annualReturnRate", type: "number", step: "0.1" },
+  { label: "Years", field: "years", type: "number", step: "1" },
+];
+
 export function ScenarioForm({ onResult }: ScenarioFormProps) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -21,7 +29,10 @@ export function ScenarioForm({ onResult }: ScenarioFormProps) {
   });
 
   function update(field: string, value: string) {
-    setForm((prev) => ({ ...prev, [field]: field === "name" ? value : parseFloat(value) || 0 }));
+    setForm((prev) => ({
+      ...prev,
+      [field]: field === "name" ? value : parseFloat(value) || 0,
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -41,28 +52,26 @@ export function ScenarioForm({ onResult }: ScenarioFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        {[
-          { label: "Scenario Name", field: "name", type: "text" },
-          { label: "Initial Amount ($)", field: "initialAmount", type: "number" },
-          { label: "Monthly Contribution ($)", field: "monthlyContribution", type: "number" },
-          { label: "Annual Return Rate (%)", field: "annualReturnRate", type: "number" },
-          { label: "Years", field: "years", type: "number" },
-        ].map(({ label, field, type }) => (
-          <div key={field} className={field === "name" ? "col-span-2" : ""}>
-            <label className="mb-1 block text-xs font-medium text-zinc-400">{label}</label>
-            <Input
-              type={type}
-              value={form[field as keyof typeof form]}
-              onChange={(e) => update(field, e.target.value)}
-              step={field === "annualReturnRate" ? "0.1" : "1"}
-            />
-          </div>
-        ))}
-      </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Calculating...</> : "Run Simulation"}
+    <form onSubmit={handleSubmit} className="space-y-3">
+      {fields.map(({ label, field, type, step }) => (
+        <div key={field}>
+          <label className="block text-xs font-semibold text-[#5A6A62] uppercase tracking-wide mb-1">
+            {label}
+          </label>
+          <Input
+            type={type}
+            value={form[field as keyof typeof form]}
+            onChange={(e) => update(field, e.target.value)}
+            step={step}
+          />
+        </div>
+      ))}
+      <Button type="submit" className="w-full mt-4" disabled={loading}>
+        {loading ? (
+          <><Loader2 className="h-4 w-4 animate-spin" /> Calculating…</>
+        ) : (
+          "Run Simulation"
+        )}
       </Button>
     </form>
   );

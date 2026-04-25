@@ -9,21 +9,24 @@ interface TickerInputProps {
   onResult: (data: unknown) => void;
 }
 
+const popular = ["AAPL", "TSLA", "NVDA", "MSFT", "GOOGL", "AMZN"];
+
 export function TickerInput({ onResult }: TickerInputProps) {
   const [ticker, setTicker] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!ticker.trim()) return;
+  async function handleSearch(symbol?: string) {
+    const t = (symbol ?? ticker).trim().toUpperCase();
+    if (!t) return;
+    setTicker(t);
     setLoading(true);
     setError("");
     try {
       const res = await fetch("/api/predictor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ticker: ticker.trim().toUpperCase() }),
+        body: JSON.stringify({ ticker: t }),
       });
       const data = await res.json();
       if (data.error) setError(data.error);
@@ -36,22 +39,48 @@ export function TickerInput({ onResult }: TickerInputProps) {
   }
 
   return (
-    <div className="space-y-2">
-      <form onSubmit={handleSearch} className="flex gap-2">
+    <div className="space-y-3">
+      <form
+        onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+        className="flex gap-2"
+      >
         <Input
           value={ticker}
           onChange={(e) => setTicker(e.target.value.toUpperCase())}
-          placeholder="Enter ticker (e.g. AAPL, TSLA, NVDA)"
+          placeholder="Enter ticker symbol (e.g. AAPL, TSLA, NVDA)"
           className="flex-1"
           maxLength={10}
           disabled={loading}
         />
         <Button type="submit" disabled={loading || !ticker.trim()}>
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-          <span className="ml-2">{loading ? "Analyzing..." : "Analyze"}</span>
+          {loading ? (
+            <><Loader2 className="h-4 w-4 animate-spin" /> Analyzing…</>
+          ) : (
+            <><Search className="h-4 w-4" /> Analyze</>
+          )}
         </Button>
       </form>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+
+      {/* Popular tickers */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs text-[#94A39A]">Popular:</span>
+        {popular.map((t) => (
+          <button
+            key={t}
+            onClick={() => handleSearch(t)}
+            disabled={loading}
+            className="rounded-lg border border-[#E4E7E5] bg-white px-2.5 py-1 text-xs font-semibold text-[#5A6A62] hover:border-[#1B5E39] hover:text-[#1B5E39] transition-colors disabled:opacity-50"
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {error && (
+        <p className="rounded-xl bg-red-50 border border-red-100 px-3.5 py-2.5 text-sm text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

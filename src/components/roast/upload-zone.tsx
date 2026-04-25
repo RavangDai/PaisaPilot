@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, FileText, Loader2 } from "lucide-react";
+import { Upload, FileText, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -45,35 +45,59 @@ export function UploadZone({ onResult }: UploadZoneProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div
         {...getRootProps()}
         className={cn(
-          "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-12 cursor-pointer transition-colors",
-          isDragActive ? "border-emerald-500 bg-emerald-900/10" : "border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800/50"
+          "flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-10 cursor-pointer transition-all",
+          isDragActive
+            ? "border-[#1B5E39] bg-[#EAF4EE]"
+            : "border-[#D5DAD7] bg-[#F8FAF9] hover:border-[#1B5E39]/50 hover:bg-[#EAF4EE]/50"
         )}
       >
         <input {...getInputProps()} />
         {file ? (
           <>
-            <FileText className="h-10 w-10 text-emerald-400 mb-3" />
-            <p className="font-medium text-zinc-100">{file.name}</p>
-            <p className="text-sm text-zinc-400">{(file.size / 1024).toFixed(1)} KB</p>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EAF4EE] mb-3">
+              <FileText className="h-6 w-6 text-[#1B5E39]" />
+            </div>
+            <p className="font-semibold text-[#111917] text-sm">{file.name}</p>
+            <p className="text-xs text-[#5A6A62] mt-1">{(file.size / 1024).toFixed(1)} KB</p>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setFile(null); }}
+              className="mt-2 flex items-center gap-1 text-xs text-[#94A39A] hover:text-red-500"
+            >
+              <X className="h-3 w-3" /> Remove
+            </button>
           </>
         ) : (
           <>
-            <Upload className="h-10 w-10 text-zinc-500 mb-3" />
-            <p className="font-medium text-zinc-300">Drop your financial statement here</p>
-            <p className="text-sm text-zinc-500 mt-1">CSV, TXT, or PDF — up to 5MB</p>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#E4E7E5] mb-3">
+              <Upload className="h-5 w-5 text-[#5A6A62]" />
+            </div>
+            <p className="font-semibold text-sm text-[#111917]">
+              {isDragActive ? "Drop it here!" : "Drop your statement here"}
+            </p>
+            <p className="text-xs text-[#5A6A62] mt-1">or click to browse</p>
+            <p className="text-[11px] text-[#94A39A] mt-3">CSV, TXT, or PDF — up to 5 MB</p>
           </>
         )}
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && (
+        <p className="rounded-xl bg-red-50 border border-red-100 px-3.5 py-2.5 text-sm text-red-600">
+          {error}
+        </p>
+      )}
 
       {file && (
         <Button onClick={handleRoast} disabled={loading} className="w-full" size="lg">
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Roasting your finances...</> : "🔥 Roast My Finances"}
+          {loading ? (
+            <><Loader2 className="h-4 w-4 animate-spin" /> Analyzing your finances…</>
+          ) : (
+            "🔥 Roast My Finances"
+          )}
         </Button>
       )}
     </div>

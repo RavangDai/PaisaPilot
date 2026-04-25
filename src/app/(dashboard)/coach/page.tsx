@@ -9,7 +9,7 @@ export default async function CoachPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <TopNav title="AI Finance Coach" />
+      <TopNav title="AI Finance Coach" subtitle="Powered by Gemini AI" />
       <div className="flex-1 overflow-hidden">
         <ChatInterface />
       </div>
