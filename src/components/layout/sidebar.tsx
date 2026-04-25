@@ -10,6 +10,7 @@ import {
   TrendingUp,
   BarChart2,
   Flame,
+  LineChart,
   Settings,
   HelpCircle,
   LogOut,
@@ -18,9 +19,10 @@ import { signOut } from "next-auth/react";
 
 const menu = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/markets", label: "Markets", icon: LineChart },
   { href: "/coach", label: "AI Coach", icon: MessageSquare },
   { href: "/simulator", label: "Simulator", icon: TrendingUp },
-  { href: "/predictor", label: "Predictor", icon: BarChart2 },
+  { href: "/predictor", label: "AI Predictor", icon: BarChart2 },
   { href: "/roast", label: "Roast My Finances", icon: Flame },
 ];
 
