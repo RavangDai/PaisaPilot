@@ -5,14 +5,84 @@ import { connectToDatabase } from "@/lib/mongodb";
 import ChatMessageModel from "@/models/ChatMessage";
 import ChatSessionModel from "@/models/ChatSession";
 
-const SYSTEM_PROMPT = `You are DollarPaisa, an expert AI financial coach. You give clear, actionable, and personalized advice on budgeting, saving, investing, debt management, and financial planning. Keep responses concise, practical, and encouraging. Always remind users to consult a licensed financial advisor for major decisions.`;
+const CHAT_PROMPT = `You are DollarPaisa, an expert AI financial coach. You give clear, actionable, and personalized advice on budgeting, saving, investing, debt management, and financial planning. Keep responses concise, practical, and encouraging. Always remind users to consult a licensed financial advisor for major decisions.`;
+
+const PLAN_PROMPT = `You are DollarPaisa, an elite financial planner. Create a detailed, actionable financial plan based on the user's inputs. Be specific with numbers, percentages, and timelines. Structure your response with clear sections: Goal Analysis, Monthly Budget Breakdown (show exact allocation), Investment Strategy (specific instruments), Key Milestones (with dates), and Risk Considerations. Be encouraging but realistic.`;
+
+const COMPARE_PROMPT = `You are DollarPaisa's financial comparison engine. Analyze two financial options and return ONLY valid JSON (no markdown) with this structure:
+{
+  "optionAName": "short name for option A",
+  "optionBName": "short name for option B",
+  "optionA": {
+    "pros": ["string", "string", "string"],
+    "cons": ["string", "string", "string"],
+    "riskLevel": "Low|Medium|High",
+    "riskScore": number (1-10),
+    "rewardScore": number (1-10),
+    "timeHorizon": "string",
+    "expectedReturn": "string"
+  },
+  "optionB": {
+    "pros": ["string", "string", "string"],
+    "cons": ["string", "string", "string"],
+    "riskLevel": "Low|Medium|High",
+    "riskScore": number (1-10),
+    "rewardScore": number (1-10),
+    "timeHorizon": "string",
+    "expectedReturn": "string"
+  },
+  "winner": "A|B|Tie",
+  "winnerReason": "string",
+  "recommendation": "string (2-3 sentences)"
+}`;
 
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { message, sessionId } = await req.json();
+    const body = await req.json();
+    const { mode, message, sessionId } = body;
+
+    if (mode === "plan") {
+      const { goal, monthlyIncome, monthlySavings, horizon, risk } = body;
+      const planPrompt = `${PLAN_PROMPT}
+
+User's Financial Goal: ${goal}
+Monthly Income: $${monthlyIncome}
+Monthly Savings Capacity: $${monthlySavings}
+Time Horizon: ${horizon} years
+Risk Tolerance: ${risk}
+
+Create a comprehensive, personalized financial plan.`;
+
+      const reply = await generateText(planPrompt, "pro");
+      return NextResponse.json({ reply });
+    }
+
+    if (mode === "compare") {
+      const { optionA, optionB, context } = body;
+      const comparePrompt = `${COMPARE_PROMPT}
+
+Option A: ${optionA}
+Option B: ${optionB}
+${context ? `Context: ${context}` : ""}
+
+Analyze and compare these two financial options.`;
+
+      const raw = await generateText(comparePrompt, "pro");
+      let parsed;
+      try {
+        const match = raw.match(/\{[\s\S]*\}/);
+        parsed = match ? JSON.parse(match[0]) : null;
+      } catch {
+        parsed = null;
+      }
+      if (!parsed) return NextResponse.json({ error: "Comparison failed. Please try again." }, { status: 500 });
+      return NextResponse.json(parsed);
+    }
+
+    // Default: chat mode
     if (!message) return NextResponse.json({ error: "Message is required" }, { status: 400 });
 
     await connectToDatabase();
@@ -30,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     const history = await ChatMessageModel.find({ sessionId: chatSessionId }).sort({ createdAt: 1 }).limit(20);
     const contextMessages = history.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
-    const fullPrompt = `${SYSTEM_PROMPT}\n\nConversation:\n${contextMessages}\n\nAssistant:`;
+    const fullPrompt = `${CHAT_PROMPT}\n\nConversation:\n${contextMessages}\n\nAssistant:`;
 
     const reply = await generateText(fullPrompt, "flash");
 
