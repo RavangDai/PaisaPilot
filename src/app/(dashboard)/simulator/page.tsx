@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { TopNav } from "@/components/layout/top-nav";
 import { Button } from "@/components/ui/button";
-import { Loader2, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2, Swords, DollarSign, Coins, Bot, Globe2 } from "lucide-react";
+import { Loader2, HelpCircle, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2, Swords, DollarSign, Coins, Bot, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -113,7 +113,7 @@ export default function WhatIfPage() {
         <div className="rounded-2xl border border-[#E4E7E5] bg-white shadow-[0_1px_3px_0_rgb(0,0,0,0.06)] p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50">
-              <Zap className="h-4 w-4 text-violet-600" />
+              <HelpCircle className="h-4 w-4 text-violet-600" />
             </div>
             <p className="text-[15px] font-semibold text-[#111917]">Ask anything</p>
           </div>

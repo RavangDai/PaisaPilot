@@ -68,6 +68,30 @@ export async function generateText(
   throw lastError ?? new Error("All Gemini models unavailable");
 }
 
+export async function generateFromPDF(
+  pdfBase64: string,
+  prompt: string,
+  safetySettings?: SafetySetting[]
+): Promise<string> {
+  const client = getClient();
+  let lastError: unknown;
+  for (const modelName of FLASH_MODELS) {
+    try {
+      const m = client.getGenerativeModel({ model: modelName, safetySettings });
+      const result = await m.generateContent([
+        { inlineData: { mimeType: "application/pdf", data: pdfBase64 } },
+        { text: prompt },
+      ]);
+      return result.response.text();
+    } catch (err) {
+      lastError = err;
+      if (isModelError(err)) continue;
+      throw err;
+    }
+  }
+  throw lastError ?? new Error("All Gemini models unavailable");
+}
+
 export async function generateStream(prompt: string) {
   const client = getClient();
   let lastError: unknown;

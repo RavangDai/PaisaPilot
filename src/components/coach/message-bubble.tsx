@@ -1,5 +1,6 @@
+import Image from "next/image";
+import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Sparkles, User } from "lucide-react";
 
 interface MessageBubbleProps {
   role: "user" | "assistant";
@@ -11,16 +12,11 @@ export function MessageBubble({ role, content }: MessageBubbleProps) {
 
   return (
     <div className={cn("flex gap-3 items-start max-w-3xl", isUser && "flex-row-reverse ml-auto")}>
-      <div
-        className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-          isUser ? "bg-[#1B5E39]" : "bg-[#1B5E39]"
-        )}
-      >
+      <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden", isUser ? "bg-[#1B5E39]" : "border border-[rgba(52,211,153,0.3)]")}>
         {isUser ? (
           <User className="h-3.5 w-3.5 text-white" />
         ) : (
-          <Sparkles className="h-3.5 w-3.5 text-white" />
+          <Image src="/georgie.png" alt="Georgie" width={32} height={32} className="object-cover object-top scale-125" />
         )}
       </div>
       <div

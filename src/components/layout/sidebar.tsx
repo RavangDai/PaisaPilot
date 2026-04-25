@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   MessageSquare,
-  Zap,
+  HelpCircle,
   BarChart2,
   Flame,
   LineChart,
+  Receipt,
   Settings,
-  HelpCircle,
   LogOut,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -21,8 +21,9 @@ const menu = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/markets",   label: "Markets",   icon: LineChart },
   { href: "/coach",     label: "AI Coach",  icon: MessageSquare },
-  { href: "/simulator", label: "What If?",  icon: Zap },
+  { href: "/simulator", label: "What If?",  icon: HelpCircle },
   { href: "/predictor", label: "Predictor", icon: BarChart2 },
+  { href: "/expenses",  label: "Expenses",  icon: Receipt },
   { href: "/roast",     label: "Roast Me",  icon: Flame },
 ];
 

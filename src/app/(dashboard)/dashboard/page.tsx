@@ -4,9 +4,10 @@ import { TopNav } from "@/components/layout/top-nav";
 import Link from "next/link";
 import {
   MessageSquare,
-  Zap,
+  HelpCircle,
   BarChart2,
   Flame,
+  Receipt,
   ArrowUpRight,
   Sparkles,
   TrendingDown,
@@ -26,7 +27,7 @@ const statCards = [
     label: "Scenarios Analyzed",
     value: "0",
     sub: "Explore a what-if",
-    icon: Zap,
+    icon: HelpCircle,
     hero: false,
     href: "/simulator",
   },
@@ -61,7 +62,7 @@ const features = [
   },
   {
     href: "/simulator",
-    icon: Zap,
+    icon: HelpCircle,
     title: "What If Scenarios",
     description:
       "Stress-test global events against your portfolio — Apple bankrupt, war, Bitcoin $1M, and more.",
@@ -78,6 +79,16 @@ const features = [
     tag: "Analyze",
     color: "#60a5fa",
     bg: "rgba(59,130,246,0.12)",
+  },
+  {
+    href: "/expenses",
+    icon: Receipt,
+    title: "Expense Tracker",
+    description:
+      "Upload a bank statement PDF and get an AI-powered breakdown of spending by category and merchant.",
+    tag: "Track",
+    color: "#34d399",
+    bg: "rgba(52,211,153,0.12)",
   },
   {
     href: "/roast",

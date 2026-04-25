@@ -186,6 +186,16 @@ select option {
 /* Also ensure bg-white/60, bg-white/80 etc stay glass-dark */
 [class*="bg-white\/"] { background-color: rgba(255,255,255,0.07) !important; }
 
+/* ── Subtle hover lift on all glass cards ──────────────────────── */
+
+.bg-white {
+  transition: box-shadow 0.2s ease, background 0.2s ease !important;
+}
+.bg-white:hover {
+  background: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.09), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
 /* ── Glass utility class ───────────────────────────────────────── */
 
 .glass {

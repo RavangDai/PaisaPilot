@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { MessageBubble } from "./message-bubble";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,7 @@ export function ChatInterface() {
 
   // Chat state
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hey! I'm your DollarPaisa AI coach. Ask me anything about budgeting, saving, investing, or debt management — I'm here to help you take control of your finances." },
+    { role: "assistant", content: "Hey! I'm Georgie, your personal AI financial coach. Ask me anything about budgeting, saving, investing, or debt management — I'm here to help you take control of your finances." },
   ]);
   const [input, setInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
@@ -127,6 +128,28 @@ export function ChatInterface() {
 
   return (
     <div className="flex h-full flex-col bg-[#F0F2F1]">
+      {/* Georgie identity header */}
+      <div
+        className="flex items-center gap-3 px-4 py-3 border-b"
+        style={{
+          background: "rgba(52,211,153,0.06)",
+          borderColor: "rgba(52,211,153,0.15)",
+        }}
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden"
+          style={{ border: "2px solid rgba(52,211,153,0.4)", background: "rgba(6,6,26,0.6)" }}>
+          <Image src="/georgie.png" alt="Georgie" width={40} height={40} className="object-cover object-top scale-125" />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-[#111917]">Georgie</p>
+          <p className="text-[11px] text-[#5A6A62]">Your AI Financial Coach</p>
+        </div>
+        <div className="ml-auto flex items-center gap-1.5">
+          <div className="h-2 w-2 rounded-full bg-[#34d399] animate-pulse" />
+          <span className="text-[11px] font-medium" style={{ color: "#34d399" }}>Online</span>
+        </div>
+      </div>
+
       {/* Tab bar */}
       <div className="flex gap-1 border-b border-[#E4E7E5] bg-white px-4 pt-3">
         {tabs.map(({ id, label, icon: Icon }) => (
@@ -155,8 +178,9 @@ export function ChatInterface() {
             ))}
             {chatLoading && (
               <div className="flex gap-3 items-start">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B5E39]">
-                  <Sparkles className="h-3.5 w-3.5 text-white" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full overflow-hidden"
+                  style={{ border: "1px solid rgba(52,211,153,0.3)", background: "rgba(6,6,26,0.6)" }}>
+                  <Image src="/georgie.png" alt="Georgie" width={32} height={32} className="object-cover object-top scale-125" />
                 </div>
                 <div className="rounded-2xl rounded-tl-sm bg-white border border-[#E4E7E5] px-4 py-3 text-sm text-[#94A39A] shadow-sm">
                   <span className="inline-flex gap-1">

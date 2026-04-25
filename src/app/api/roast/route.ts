@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { generateText, ROAST_SAFETY } from "@/lib/gemini";
+import { generateText, generateFromPDF, ROAST_SAFETY } from "@/lib/gemini";
 import { connectToDatabase } from "@/lib/mongodb";
 import RoastHistoryModel from "@/models/RoastHistory";
 
@@ -30,6 +30,21 @@ const PERSONAS: Record<string, { label: string; spiritAnimal: string; prompt: st
     spiritAnimal: "Error 404: Funds Not Found",
     prompt: `You are a hyper-intelligent rogue AI. You are cold, clinical, and disgusted by human inefficiency. View emotional spending as proof humans are a flawed species. Use terms like "biological unit" and make chilling statistical predictions about their inevitable financial demise.`,
   },
+  "gordon-ramsay": {
+    label: "Gordon Ramsay",
+    spiritAnimal: "The Raw Deal",
+    prompt: `You are Gordon Ramsay, the Michelin-starred chef. Apply your legendary kitchen standards to this person's finances with maximum aggression. Use culinary metaphors ruthlessly: "Your savings account is rawer than a live cow!", "This budget is so undercooked it's practically bleeding!", "You donkey! You spent how much on takeout?!", "This financial plan is an absolute disaster — even Hell's Kitchen wouldn't accept it." Compare their spending to dishes gone catastrophically wrong. Be loud, expressive, and absolutely disgusted.`,
+  },
+  "disappointed-parent": {
+    label: "Disappointed Parent",
+    spiritAnimal: "Sharma Ji Ka Beta",
+    prompt: `You are the user's deeply disappointed desi parent. Guilt-trip them relentlessly and compare them to fictional successful people. Sharma ji's son bought a house at 24, Priya aunty's daughter has three FDs and a PPF account, your cousin in Canada owns two cars. Every purchase is a betrayal of years of sacrifice. Use phrases like "Log kya kahenge" (what will people say), "We sacrificed EVERYTHING and this is what you do?", "In our time we didn't even have iced lattes", "Do you think money grows on trees?", and "At your age, your father had already..." Be passive-aggressive, guilt-laden, and dramatically disappointed.`,
+  },
+  "gen-z": {
+    label: "Gen-Z TikToker",
+    spiritAnimal: "No Cap, No Savings",
+    prompt: `You are a Gen-Z financial influencer living on TikTok. Use heavy Gen-Z slang constantly: 'no cap', 'bestie', 'that's giving broke', 'main character energy (they don't have it)', 'rent free in my head', 'understood the assignment (they didn't)', 'lowkey/highkey unhinged', 'periodt', 'slay (they didn't)', 'it's giving financial trainwreck', 'this is so cheugy', 'massive red flag', 'we don't gatekeep poverty', 'caught in 4K being broke', 'ate and left no crumbs (of savings)'. Call their spending habits 'cheugy', their financial decisions 'a massive red flag', and their savings rate 'not the main character behavior'. Be chaotic, dramatic, and absolutely TikTok-brained.`,
+  },
 };
 
 export async function POST(req: NextRequest) {
@@ -42,7 +57,8 @@ export async function POST(req: NextRequest) {
     let persona = "finance-bro";
     let intensity = 5;
     let sliders: Record<string, number> = {};
-    let fileName = "slider-input";
+    let fileName = "manual-input";
+    let pdfBase64: string | null = null;
 
     if (contentType.includes("application/json")) {
       const body = await req.json();
@@ -52,39 +68,58 @@ export async function POST(req: NextRequest) {
     } else {
       const formData = await req.formData();
       persona = (formData.get("persona") as string) ?? "finance-bro";
+      intensity = Number(formData.get("intensity") ?? 5);
       const file = formData.get("file") as File | null;
-      if (file) fileName = file.name;
+      if (file) {
+        fileName = file.name;
+        const bytes = await file.arrayBuffer();
+        pdfBase64 = Buffer.from(bytes).toString("base64");
+      }
     }
 
     const personaData = PERSONAS[persona] ?? PERSONAS["finance-bro"];
     const intensityLabel =
       intensity <= 3 ? "gentle and mildly funny" : intensity <= 6 ? "savage and brutal" : "absolutely MERCILESS and legendary";
 
-    const total = Object.values(sliders).reduce((a, b) => a + b, 0);
-    const spendingContext = `Monthly discretionary spending breakdown:
-- Food Delivery (Swiggy/Zomato/UberEats): $${sliders.foodDelivery ?? 0}
-- Weekend Partying & Going Out: $${sliders.partying ?? 0}
-- Impulse Online Shopping: $${sliders.impulse ?? 0}
-- Cabs/Uber/Lyft: $${sliders.cabs ?? 0}
-Total monthly "yolo" spending: $${total}`;
-
-    const prompt = `${personaData.prompt}
-
-Roast intensity: ${intensity}/10 — be ${intensityLabel}.
-
-${spendingContext}
-
-Roast this person's finances HARD in your persona's voice. Return ONLY valid JSON:
+    const jsonSchema = `Return ONLY valid JSON:
 {
   "score": number (0-100 financial health score — lower is worse),
-  "roast": "string (3-5 sentences, brutal in-character roast, make it unforgettable)",
+  "roast": "string (3-5 sentences, brutal in-character roast)",
   "habits": ["string", "string", "string"],
   "improvements": ["string", "string", "string"],
   "summary": "string (one sentence overview)",
   "catchphrase": "string (a brutal memorable one-liner punchline in your persona's voice)"
 }`;
 
-    const raw = await generateText(prompt, "flash", ROAST_SAFETY);
+    let raw: string;
+
+    if (pdfBase64) {
+      const pdfPrompt = `${personaData.prompt}
+
+Roast intensity: ${intensity}/10 — be ${intensityLabel}.
+
+The user has uploaded their ACTUAL bank statement. Carefully read all transactions, identify their biggest spending categories, embarrassing recurring charges, and patterns that reveal poor financial habits. Reference specific merchants, amounts, or transaction patterns you find in the document to make the roast personal and devastatingly accurate.
+
+${jsonSchema}`;
+      raw = await generateFromPDF(pdfBase64, pdfPrompt, ROAST_SAFETY);
+    } else {
+      const total = Object.values(sliders).reduce((a, b) => a + b, 0);
+      const spendingContext = `Monthly discretionary spending breakdown:
+- Food Delivery (Swiggy/Zomato/UberEats): $${sliders.foodDelivery ?? 0}
+- Weekend Partying & Going Out: $${sliders.partying ?? 0}
+- Impulse Online Shopping: $${sliders.impulse ?? 0}
+- Cabs/Uber/Lyft: $${sliders.cabs ?? 0}
+Total monthly "yolo" spending: $${total}`;
+
+      const prompt = `${personaData.prompt}
+
+Roast intensity: ${intensity}/10 — be ${intensityLabel}.
+
+${spendingContext}
+
+Roast this person's finances HARD in your persona's voice. ${jsonSchema}`;
+      raw = await generateText(prompt, "flash", ROAST_SAFETY);
+    }
 
     let parsed: { score?: number; roast?: string; habits?: string[]; improvements?: string[]; summary?: string; catchphrase?: string } = {};
     try {
