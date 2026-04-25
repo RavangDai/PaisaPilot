@@ -55,7 +55,7 @@ const features = [
     icon: MessageSquare,
     title: "AI Finance Coach",
     description:
-      "Ask anything — budgeting, saving, investing, or debt. Get clear, personalized advice in seconds.",
+      "Ask anything: budgeting, saving, investing, or debt. Get clear, personalized advice in seconds.",
     tag: "Chat",
     color: "#34d399",
     bg: "rgba(52,211,153,0.12)",
@@ -65,7 +65,7 @@ const features = [
     icon: HelpCircle,
     title: "What If Scenarios",
     description:
-      "Stress-test global events against your portfolio — Apple bankrupt, war, Bitcoin $1M, and more.",
+      "Stress-test global events against your portfolio: Apple bankrupt, war, Bitcoin $1M, and more.",
     tag: "What If",
     color: "#a78bfa",
     bg: "rgba(124,58,237,0.12)",
@@ -75,7 +75,7 @@ const features = [
     icon: BarChart2,
     title: "Stock Predictor",
     description:
-      "AI-powered sentiment analysis on any ticker — outlook, risks, and opportunities explained.",
+      "AI-powered sentiment analysis on any ticker: outlook, risks, and opportunities explained.",
     tag: "Analyze",
     color: "#60a5fa",
     bg: "rgba(59,130,246,0.12)",

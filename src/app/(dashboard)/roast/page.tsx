@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { TopNav } from "@/components/layout/top-nav";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import {
   Loader2, Flame, ChevronRight,
   TrendingUp, Wind, Briefcase, HeartCrack, Cpu,
   ChefHat, Users, Smartphone,
-  Upload, FileText, X,
+  Upload, FileText, X, FolderOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ElementType } from "react";
@@ -122,11 +122,20 @@ export default function RoastPage() {
   const [persona, setPersona] = useState("finance-bro");
   const [intensity, setIntensity] = useState(7);
   const [sliders, setSliders] = useState({ foodDelivery: 0, partying: 0, impulse: 0, cabs: 0 });
-  const [inputMode, setInputMode] = useState<"manual" | "pdf">("manual");
+  const [inputMode, setInputMode] = useState<"manual" | "pdf" | "saved">("manual");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [savedStatements, setSavedStatements] = useState<{ _id: string; fileName: string; period: string; totalDebits: number; currency: string }[]>([]);
+  const [selectedStatementId, setSelectedStatementId] = useState<string | null>(null);
   const [result, setResult] = useState<RoastData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/expenses")
+      .then((r) => r.json())
+      .then((d) => { if (Array.isArray(d)) setSavedStatements(d); })
+      .catch(() => {});
+  }, []);
 
   const onDrop = useCallback((accepted: File[]) => {
     if (accepted[0]) setPdfFile(accepted[0]);
@@ -153,6 +162,12 @@ export default function RoastPage() {
         form.append("persona", persona);
         form.append("intensity", String(intensity));
         res = await fetch("/api/roast", { method: "POST", body: form });
+      } else if (inputMode === "saved" && selectedStatementId) {
+        res = await fetch("/api/roast", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ persona, intensity, statementId: selectedStatementId }),
+        });
       } else {
         res = await fetch("/api/roast", {
           method: "POST",
@@ -175,11 +190,12 @@ export default function RoastPage() {
     setStep(0); setResult(null); setError(""); setPdfFile(null);
     setSliders({ foodDelivery: 0, partying: 0, impulse: 0, cabs: 0 });
     setPersona("finance-bro"); setIntensity(7); setInputMode("manual");
+    setSelectedStatementId(null);
   }
 
   const selectedPersona = PERSONAS.find((p) => p.id === persona) ?? PERSONAS[0];
   const total = Object.values(sliders).reduce((a, b) => a + b, 0);
-  const canRoast = inputMode === "pdf" ? !!pdfFile : true;
+  const canRoast = inputMode === "pdf" ? !!pdfFile : inputMode === "saved" ? !!selectedStatementId : true;
 
   return (
     <div className="flex h-full flex-col">
@@ -297,8 +313,12 @@ export default function RoastPage() {
               {/* Mode toggle */}
               <div className="rounded-2xl border border-[#E4E7E5] bg-white p-5 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
                 <p className="text-[15px] font-bold text-[#111917] mb-3">How should we get your data?</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {(["pdf", "manual"] as const).map((mode) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {([
+                    { mode: "manual", Icon: TrendingUp, label: "Manual Sliders", sub: "Enter spending amounts" },
+                    { mode: "pdf",    Icon: FileText,   label: "Upload PDF",     sub: "New bank statement" },
+                    { mode: "saved",  Icon: FolderOpen, label: "My Uploads",     sub: `${savedStatements.length} saved` },
+                  ] as const).map(({ mode, Icon, label, sub }) => (
                     <button
                       key={mode}
                       onClick={() => setInputMode(mode)}
@@ -309,18 +329,9 @@ export default function RoastPage() {
                           : { borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.03)" }
                       }
                     >
-                      <div className="flex items-center gap-2 mb-1">
-                        {mode === "pdf"
-                          ? <FileText className="h-4 w-4" style={{ color: inputMode === "pdf" ? "#34d399" : "rgba(255,255,255,0.4)" }} />
-                          : <TrendingUp className="h-4 w-4" style={{ color: inputMode === "manual" ? "#34d399" : "rgba(255,255,255,0.4)" }} />
-                        }
-                        <span className="text-sm font-semibold" style={{ color: inputMode === mode ? "#34d399" : "rgba(255,255,255,0.6)" }}>
-                          {mode === "pdf" ? "Upload PDF Statement" : "Enter Manually"}
-                        </span>
-                      </div>
-                      <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
-                        {mode === "pdf" ? "Real transactions, personalised roast" : "Use spending sliders"}
-                      </p>
+                      <Icon className="h-4 w-4 mb-1.5" style={{ color: inputMode === mode ? "#34d399" : "rgba(255,255,255,0.4)" }} />
+                      <p className="text-xs font-semibold" style={{ color: inputMode === mode ? "#34d399" : "rgba(255,255,255,0.6)" }}>{label}</p>
+                      <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>
                     </button>
                   ))}
                 </div>
@@ -343,7 +354,7 @@ export default function RoastPage() {
                       <p className="text-sm font-semibold text-[#111917] mb-1">
                         {isDragActive ? "Drop it here" : "Drop your bank statement PDF"}
                       </p>
-                      <p className="text-xs text-[#5A6A62]">or click to browse — PDF only</p>
+                      <p className="text-xs text-[#5A6A62]">or click to browse. PDF only</p>
                     </div>
                   ) : (
                     <div
@@ -353,11 +364,49 @@ export default function RoastPage() {
                       <FileText className="h-8 w-8 shrink-0" style={{ color: "#34d399" }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-[#111917] truncate">{pdfFile.name}</p>
-                        <p className="text-xs text-[#5A6A62]">{(pdfFile.size / 1024).toFixed(0)} KB — ready to roast</p>
+                        <p className="text-xs text-[#5A6A62]">{(pdfFile.size / 1024).toFixed(0)} KB, ready to roast</p>
                       </div>
                       <button onClick={() => setPdfFile(null)} className="shrink-0 p-1 rounded-lg hover:bg-white/10 transition-colors">
                         <X className="h-4 w-4" style={{ color: "rgba(255,255,255,0.4)" }} />
                       </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Saved statement picker */}
+              {inputMode === "saved" && (
+                <div className="rounded-2xl border border-[#E4E7E5] bg-white p-5 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+                  {savedStatements.length === 0 ? (
+                    <div className="text-center py-6">
+                      <FolderOpen className="h-8 w-8 mx-auto mb-2" style={{ color: "rgba(255,255,255,0.2)" }} />
+                      <p className="text-sm text-[#5A6A62]">No uploaded statements yet.</p>
+                      <p className="text-xs text-[#94A39A] mt-1">Upload one in the Expenses tab first.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {savedStatements.map((s) => {
+                        const active = selectedStatementId === s._id;
+                        return (
+                          <button
+                            key={s._id}
+                            onClick={() => setSelectedStatementId(active ? null : s._id)}
+                            className="w-full rounded-xl border p-3 text-left transition-all flex items-center gap-3"
+                            style={
+                              active
+                                ? { borderColor: "#34d399", borderWidth: 2, backgroundColor: "rgba(52,211,153,0.1)" }
+                                : { borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.03)" }
+                            }
+                          >
+                            <FileText className="h-5 w-5 shrink-0" style={{ color: active ? "#34d399" : "rgba(255,255,255,0.35)" }} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-[#111917] truncate">{s.fileName ?? "Statement"}</p>
+                              <p className="text-[11px] text-[#94A39A]">{s.period} · ${(s.totalDebits ?? 0).toLocaleString()} spent</p>
+                            </div>
+                            {active && <div className="h-3 w-3 rounded-full shrink-0 bg-[#34d399]" />}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -440,6 +489,9 @@ export default function RoastPage() {
               </Button>
               {inputMode === "pdf" && !pdfFile && (
                 <p className="text-center text-xs text-[#94A39A]">Upload a PDF to continue</p>
+              )}
+              {inputMode === "saved" && !selectedStatementId && savedStatements.length > 0 && (
+                <p className="text-center text-xs text-[#94A39A]">Select a statement to continue</p>
               )}
             </div>
           )}

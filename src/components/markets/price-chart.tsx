@@ -144,7 +144,7 @@ export function PriceChart({ symbol, name, currentPrice, change, changePct, curr
         <div>
           <div className="flex items-baseline gap-3">
             <span className="text-3xl font-bold text-[#111917]">
-              {currentPrice ? formatPrice(currentPrice, currency) : "—"}
+              {currentPrice ? formatPrice(currentPrice, currency) : "-"}
             </span>
             {changePct !== undefined && (
               <span className={`flex items-center gap-1 text-sm font-semibold ${isUp ? "text-[#16a34a]" : "text-[#dc2626]"}`}>

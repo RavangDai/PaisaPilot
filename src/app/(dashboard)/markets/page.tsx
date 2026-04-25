@@ -338,17 +338,17 @@ export default function MarketsPage() {
                             ? ((q.regularMarketVolume ?? 0) >= 1e6
                                 ? `${((q.regularMarketVolume ?? 0) / 1e6).toFixed(1)}M`
                                 : `${((q.regularMarketVolume ?? 0) / 1e3).toFixed(0)}K`)
-                            : "—"}
+                            : "-"}
                         </td>
                         <td className="px-4 py-3 text-[#5A6A62] whitespace-nowrap">
                           {(q.regularMarketDayHigh ?? 0) > 0
                             ? (q.regularMarketDayHigh ?? 0).toLocaleString("en-US", { style: "currency", currency: q.currency ?? "USD", maximumFractionDigits: 2 })
-                            : "—"}
+                            : "-"}
                         </td>
                         <td className="px-4 py-3 text-[#5A6A62] whitespace-nowrap">
                           {(q.regularMarketDayLow ?? 0) > 0
                             ? (q.regularMarketDayLow ?? 0).toLocaleString("en-US", { style: "currency", currency: q.currency ?? "USD", maximumFractionDigits: 2 })
-                            : "—"}
+                            : "-"}
                         </td>
                       </tr>
                     );

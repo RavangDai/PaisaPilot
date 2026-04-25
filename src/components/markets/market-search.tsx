@@ -75,7 +75,7 @@ export function MarketSearch({ onSelect }: MarketSearchProps) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value.toUpperCase())}
-            placeholder="Search ticker — AAPL, BTC-USD, ^GSPC…"
+            placeholder="Search ticker: AAPL, BTC-USD, GSPC..."
             className="w-full h-10 rounded-xl border border-[#E4E7E5] bg-white pl-9 pr-9 text-sm text-[#111917] placeholder:text-[#94A39A] focus:outline-none focus:ring-2 focus:ring-[#1B5E39]/25 focus:border-[#1B5E39]"
           />
           {query && (

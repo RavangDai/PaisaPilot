@@ -131,7 +131,7 @@ export default function ExpensesPage() {
               <p className="text-sm font-semibold text-[#111917] mb-1">
                 {isDragActive ? "Drop it here" : "Drop your bank statement PDF here"}
               </p>
-              <p className="text-xs text-[#5A6A62]">or click to browse — PDF only, any bank format</p>
+              <p className="text-xs text-[#5A6A62]">or click to browse. PDF only, any bank format</p>
             </div>
           ) : (
             <div className="flex items-center gap-3">

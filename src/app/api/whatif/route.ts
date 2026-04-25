@@ -1,18 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { generateText } from "@/lib/gemini";
+import { connectToDatabase } from "@/lib/mongodb";
+import StatementModel from "@/models/Statement";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
     if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { scenario } = await req.json();
+    const { scenario, statementId } = await req.json();
     if (!scenario?.trim()) return NextResponse.json({ error: "Scenario is required" }, { status: 400 });
 
-    const prompt = `You are DollarPaisa's What-If Financial Analysis Engine — a world-class economic analyst. Analyze this hypothetical scenario with deep financial expertise.
+    let statementContext = "";
+    if (statementId) {
+      await connectToDatabase();
+      const stmt = await StatementModel.findOne({ _id: statementId, userId: session.user.id }).lean() as Record<string, unknown> | null;
+      if (stmt) {
+        const cats = (stmt.categories as { name: string; amount: number }[])
+          .slice(0, 6).map((c) => `  ${c.name}: $${c.amount}`).join("\n");
+        const merchants = (stmt.topMerchants as { name: string; amount: number }[])
+          .slice(0, 4).map((m) => `  ${m.name}: $${m.amount}`).join("\n");
+        statementContext = `
 
-Scenario: "${scenario}"
+USER'S ACTUAL FINANCIAL DATA (from uploaded bank statement, period: ${stmt.period ?? "recent"}):
+Monthly income: $${stmt.totalCredits ?? 0}
+Monthly expenses: $${stmt.totalDebits ?? 0}
+Savings rate: ${stmt.savingsRate ?? 0}%
+Spending breakdown:
+${cats}
+Top merchants:
+${merchants}
+
+Analyze this scenario specifically in context of the user's actual spending. Be personal, specific, and reference their real numbers. For personal what-if queries (e.g. "what if I stop X", "how long to save for Y"), calculate exact timelines using their real data.`;
+      }
+    }
+
+    const prompt = `You are DollarPaisa's What-If Financial Analysis Engine, a world-class economic analyst. Analyze this hypothetical scenario with deep financial expertise.
+
+Scenario: "${scenario}"${statementContext}
 
 Return ONLY valid JSON (no markdown, no extra text) with exactly this structure:
 {
@@ -37,7 +63,7 @@ Return ONLY valid JSON (no markdown, no extra text) with exactly this structure:
   "verdict": "2-3 sentence overall financial assessment"
 }
 
-Requirements: exactly 5 immediateEffects, 6 stocksAffected (mix up/down), 4 sectorsImpacted, 4 personalFinanceTips, 4 timeline entries (Day 1, Week 1, Month 1, 6 Months).`;
+Requirements: exactly 5 immediateEffects, 6 stocksAffected (mix up/down), 4 sectorsImpacted, 4 personalFinanceTips, 4 timeline entries (Day 1, Week 1, Month 1, 6 Months). For personal scenarios, make personalFinanceTips extremely specific with real numbers from the user's data.`;
 
     const raw = await generateText(prompt, "pro");
 

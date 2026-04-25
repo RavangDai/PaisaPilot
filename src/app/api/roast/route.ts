@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { generateText, generateFromPDF, ROAST_SAFETY } from "@/lib/gemini";
 import { connectToDatabase } from "@/lib/mongodb";
 import RoastHistoryModel from "@/models/RoastHistory";
+import StatementModel from "@/models/Statement";
 
 const PERSONAS: Record<string, { label: string; spiritAnimal: string; prompt: string }> = {
   "finance-bro": {
@@ -59,12 +60,14 @@ export async function POST(req: NextRequest) {
     let sliders: Record<string, number> = {};
     let fileName = "manual-input";
     let pdfBase64: string | null = null;
+    let statementId: string | null = null;
 
     if (contentType.includes("application/json")) {
       const body = await req.json();
       persona = body.persona ?? "finance-bro";
       intensity = body.intensity ?? 5;
       sliders = body.sliders ?? {};
+      statementId = body.statementId ?? null;
     } else {
       const formData = await req.formData();
       persona = (formData.get("persona") as string) ?? "finance-bro";
@@ -93,7 +96,35 @@ export async function POST(req: NextRequest) {
 
     let raw: string;
 
-    if (pdfBase64) {
+    if (statementId) {
+      await connectToDatabase();
+      const stmt = await StatementModel.findOne({ _id: statementId, userId: session.user.id }).lean() as Record<string, unknown> | null;
+      if (!stmt) return NextResponse.json({ error: "Statement not found" }, { status: 404 });
+      fileName = (stmt.fileName as string) ?? "saved-statement";
+      const cats = (stmt.categories as { name: string; amount: number; count: number }[])
+        .map((c) => `  ${c.name}: $${c.amount} (${c.count} transactions)`).join("\n");
+      const merchants = (stmt.topMerchants as { name: string; amount: number }[])
+        .slice(0, 5).map((m) => `  ${m.name}: $${m.amount}`).join("\n");
+      const statementContext = `The user's actual bank statement (${stmt.period ?? "recent period"}):
+Income: $${stmt.totalCredits ?? 0} | Expenses: $${stmt.totalDebits ?? 0} | Savings rate: ${stmt.savingsRate ?? 0}%
+
+Spending breakdown:
+${cats}
+
+Top merchants they spend at:
+${merchants}`;
+
+      const stmtPrompt = `${personaData.prompt}
+
+Roast intensity: ${intensity}/10 — be ${intensityLabel}.
+
+${statementContext}
+
+Based on this REAL spending data, roast this person mercilessly in your persona's voice. Call out specific categories, merchants, and embarrassing spending patterns by name.
+
+${jsonSchema}`;
+      raw = await generateText(stmtPrompt, "flash", ROAST_SAFETY);
+    } else if (pdfBase64) {
       const pdfPrompt = `${personaData.prompt}
 
 Roast intensity: ${intensity}/10 — be ${intensityLabel}.

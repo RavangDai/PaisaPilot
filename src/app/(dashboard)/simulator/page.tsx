@@ -1,11 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TopNav } from "@/components/layout/top-nav";
 import { Button } from "@/components/ui/button";
-import { Loader2, HelpCircle, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2, Swords, DollarSign, Coins, Bot, Globe2 } from "lucide-react";
+import { Loader2, HelpCircle, Zap, TrendingDown, TrendingUp, Minus, Clock, Lightbulb, BarChart2, Swords, DollarSign, Coins, Bot, Globe2, ChevronDown, User, FileText, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+
+interface SavedStatement {
+  _id: string;
+  fileName: string;
+  period: string;
+  totalCredits: number;
+  totalDebits: number;
+  savingsRate: number;
+  categories: { name: string; amount: number }[];
+  topMerchants: { name: string; amount: number }[];
+}
 
 interface Scenario {
   icon: ReactNode;
@@ -69,12 +80,60 @@ interface WhatIfResult {
   verdict: string;
 }
 
+function buildPersonalScenarios(stmt: SavedStatement): { icon: ReactNode; title: string; q: string }[] {
+  const scenarios: { icon: ReactNode; title: string; q: string }[] = [];
+  const topCat = stmt.categories?.[0];
+  const topMerchant = stmt.topMerchants?.[0];
+  const monthlySavings = stmt.totalCredits - stmt.totalDebits;
+
+  if (topCat) {
+    scenarios.push({
+      icon: <TrendingDown className="h-7 w-7 text-orange-400" />,
+      title: `Cut ${topCat.name} by 50%`,
+      q: `What if I cut my ${topCat.name} spending from $${topCat.amount} to $${Math.round(topCat.amount / 2)} per month? I currently earn $${stmt.totalCredits} and spend $${stmt.totalDebits} monthly with a ${stmt.savingsRate}% savings rate.`,
+    });
+  }
+  if (topMerchant) {
+    scenarios.push({
+      icon: <DollarSign className="h-7 w-7 text-rose-400" />,
+      title: `Stop spending at ${topMerchant.name}`,
+      q: `What if I completely stopped spending at ${topMerchant.name} (currently $${topMerchant.amount}/month)? My monthly income is $${stmt.totalCredits} and total expenses are $${stmt.totalDebits}.`,
+    });
+  }
+  if (monthlySavings > 0) {
+    scenarios.push({
+      icon: <Coins className="h-7 w-7 text-yellow-400" />,
+      title: "Save for a MacBook Pro",
+      q: `How long will it take me to save enough to buy a MacBook Pro ($2,499) if I keep my current savings rate of ${stmt.savingsRate}% on a $${stmt.totalCredits} monthly income? What if I also cut discretionary spending by 20%?`,
+    });
+  }
+  scenarios.push({
+    icon: <Sparkles className="h-7 w-7 text-violet-400" />,
+    title: "Double my savings rate",
+    q: `What if I doubled my savings rate from ${stmt.savingsRate}% to ${Math.min(stmt.savingsRate * 2, 60)}%? My monthly income is $${stmt.totalCredits}. What would that look like in 1, 3, and 5 years?`,
+  });
+  return scenarios;
+}
+
 export default function WhatIfPage() {
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<WhatIfResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeScenario, setActiveScenario] = useState<string | null>(null);
+  const [savedStatements, setSavedStatements] = useState<SavedStatement[]>([]);
+  const [selectedStatementId, setSelectedStatementId] = useState<string>("");
+  const [showStatements, setShowStatements] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/expenses")
+      .then((r) => r.json())
+      .then((d) => { if (Array.isArray(d)) setSavedStatements(d); })
+      .catch(() => {});
+  }, []);
+
+  const selectedStatement = savedStatements.find((s) => s._id === selectedStatementId) ?? null;
+  const personalScenarios = selectedStatement ? buildPersonalScenarios(selectedStatement) : [];
 
   async function analyze(scenario: string) {
     setLoading(true);
@@ -84,7 +143,7 @@ export default function WhatIfPage() {
       const res = await fetch("/api/whatif", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scenario }),
+        body: JSON.stringify({ scenario, statementId: selectedStatementId || undefined }),
       });
       const data = await res.json();
       if (data.error) setError(data.error);
@@ -96,7 +155,7 @@ export default function WhatIfPage() {
     }
   }
 
-  function pickScenario(s: typeof PREBUILT[0]) {
+  function pickScenario(s: { icon: ReactNode; title: string; q: string }) {
     setActiveScenario(s.title);
     setQuery(s.q);
     analyze(s.q);
@@ -131,6 +190,74 @@ export default function WhatIfPage() {
             </Button>
           </div>
         </div>
+
+        {/* Personalize with my data */}
+        {!result && !loading && savedStatements.length > 0 && (
+          <div className="rounded-2xl border border-[#E4E7E5] bg-white shadow-[0_1px_3px_0_rgb(0,0,0,0.06)] overflow-hidden">
+            <button
+              onClick={() => setShowStatements((v) => !v)}
+              className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-[#F8FAF9] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50">
+                  <User className="h-4 w-4 text-emerald-600" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[14px] font-semibold text-[#111917]">Personalize with my data</p>
+                  <p className="text-[11px] text-[#94A39A]">
+                    {selectedStatement
+                      ? `Using: ${selectedStatement.fileName} (${selectedStatement.period})`
+                      : "Select a statement for personal scenario analysis"}
+                  </p>
+                </div>
+              </div>
+              <ChevronDown className={cn("h-4 w-4 text-[#94A39A] transition-transform", showStatements && "rotate-180")} />
+            </button>
+
+            {showStatements && (
+              <div className="border-t border-[#E4E7E5] px-5 py-4 space-y-3">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {savedStatements.map((s) => (
+                    <button
+                      key={s._id}
+                      onClick={() => setSelectedStatementId(s._id === selectedStatementId ? "" : s._id)}
+                      className={cn(
+                        "flex items-center gap-3 rounded-xl border p-3 text-left transition-all",
+                        selectedStatementId === s._id
+                          ? "border-[#1B5E39] bg-[#EAF4EE]"
+                          : "border-[#E4E7E5] hover:border-[#1B5E39]/40 hover:bg-[#F8FAF9]"
+                      )}
+                    >
+                      <FileText className={cn("h-5 w-5 shrink-0", selectedStatementId === s._id ? "text-[#1B5E39]" : "text-[#94A39A]")} />
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-semibold text-[#111917] truncate">{s.fileName}</p>
+                        <p className="text-[11px] text-[#94A39A]">{s.period} · {s.savingsRate}% savings</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {selectedStatement && personalScenarios.length > 0 && (
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-[#94A39A] mb-2">Your personalized scenarios</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {personalScenarios.map((s) => (
+                        <button
+                          key={s.title}
+                          onClick={() => { setShowStatements(false); pickScenario(s); }}
+                          className="rounded-xl border border-[#E4E7E5] bg-[#F8FAF9] p-3 text-left hover:border-[#1B5E39]/40 hover:bg-white transition-all"
+                        >
+                          <div className="mb-1.5 h-7 w-7 flex items-center justify-center">{s.icon}</div>
+                          <p className="text-[12px] font-semibold text-[#111917] leading-snug">{s.title}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Pre-built scenarios */}
         {!result && !loading && (

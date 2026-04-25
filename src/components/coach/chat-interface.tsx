@@ -39,7 +39,7 @@ export function ChatInterface() {
 
   // Chat state
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hey! I'm Georgie, your personal AI financial coach. Ask me anything about budgeting, saving, investing, or debt management — I'm here to help you take control of your finances." },
+    { role: "assistant", content: "Hey! I'm Georgie, your personal AI financial coach. Ask me anything about budgeting, saving, investing, or debt management. I'm here to help you take control of your finances." },
   ]);
   const [input, setInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
