@@ -23,7 +23,7 @@ export function ChatInterface() {
     {
       role: "assistant",
       content:
-        "Hey! I'm your PaisaPilot AI coach. Ask me anything about budgeting, saving, investing, or debt management — I'm here to help you take control of your finances.",
+        "Hey! I'm your DollarPaisa AI coach. Ask me anything about budgeting, saving, investing, or debt management — I'm here to help you take control of your finances.",
     },
   ]);
   const [input, setInput] = useState("");

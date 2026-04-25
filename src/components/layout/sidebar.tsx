@@ -75,13 +75,13 @@ export function Sidebar() {
       <div className="flex h-[68px] items-center gap-2.5 border-b border-[#E4E7E5] px-5">
         <Image
           src="/logo.png"
-          alt="PaisaPilot"
+          alt="DollarPaisa"
           width={32}
           height={32}
           className="shrink-0 object-contain"
         />
         <div>
-          <p className="text-[15px] font-bold text-[#111917] leading-tight">PaisaPilot</p>
+          <p className="text-[15px] font-bold text-[#111917] leading-tight">DollarPaisa</p>
           <p className="text-[10px] text-[#94A39A] font-medium tracking-wide uppercase">Finance AI</p>
         </div>
       </div>

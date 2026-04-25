@@ -37,9 +37,9 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <Image src="/logo.png" alt="PaisaPilot" width={56} height={56} className="object-contain mb-3" />
+          <Image src="/logo.png" alt="DollarPaisa" width={56} height={56} className="object-contain mb-3" />
           <h1 className="text-2xl font-bold text-[#111917]">Welcome back</h1>
-          <p className="text-sm text-[#5A6A62] mt-1">Sign in to your PaisaPilot account</p>
+          <p className="text-sm text-[#5A6A62] mt-1">Sign in to your DollarPaisa account</p>
         </div>
 
         {/* Card */}

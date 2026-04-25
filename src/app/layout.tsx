@@ -10,7 +10,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "PaisaPilot — Intelligent Financial Guidance",
+  title: "DollarPaisa — Intelligent Financial Guidance",
   description: "AI-powered personal finance coach, investment simulator, and stock predictor",
 };
 
